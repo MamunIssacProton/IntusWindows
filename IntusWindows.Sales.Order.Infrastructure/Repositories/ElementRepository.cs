@@ -28,10 +28,6 @@ public sealed class ElementRepository : BaseContextRepository, IElementRepositor
 
     public async Task<ApiResultDTO> SaveElementAsync(Element element, string dimensionId)
     {
-        //var dimension = await context.Dimensions.Where(x => x.Id == dimensionId).FirstOrDefaultAsync();
-        //if (dimension == null)
-        //    return new ApiResultDTO(false,$"{dimensionId} has not found in Dimension");
-        //element.ChangeDimension(dimension);
         await context.Elements.AddAsync(element);
         await context.SaveChangesAsync();
         return new ApiResultDTO(true, element.Id.ToString());

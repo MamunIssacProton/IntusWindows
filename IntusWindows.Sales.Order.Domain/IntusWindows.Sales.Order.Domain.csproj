@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,6 +16,8 @@
     <None Remove="Events\Dimension\" />
     <None Remove="Events\Element\" />
     <None Remove="Events\Window\" />
+    <None Remove="Events\Order\" />
+    <None Remove="Events\State\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Entities\" />
@@ -27,6 +29,8 @@
     <Folder Include="Events\Dimension\" />
     <Folder Include="Events\Element\" />
     <Folder Include="Events\Window\" />
+    <Folder Include="Events\Order\" />
+    <Folder Include="Events\State\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\IntusWindows.Sales.Shared\IntusWindows.Sales.Shared.csproj" />

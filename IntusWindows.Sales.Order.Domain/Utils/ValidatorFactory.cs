@@ -31,10 +31,11 @@ public class ValidatorFactory
 
         if (string.IsNullOrEmpty(value))
             throw new InvalidValueException(propertyName, "value cannot be null or empty");
-        if (value.Length < 3)
+        if (value.Length < 2)
             throw new InvalidValueException(propertyName, "value must contains 4 characters");
 
     }
+
     public static void ValidateWidth(ElementType elementType, string property, decimal value)
     {
         switch (elementType)

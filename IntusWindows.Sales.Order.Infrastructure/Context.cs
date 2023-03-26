@@ -2,7 +2,7 @@
 using IntusWindows.Sales.Order.Infrastructure.Configurations;
 using Microsoft.EntityFrameworkCore;
 using Element = IntusWindows.Sales.Order.Domain.Entities.Element;
-
+using Ordr = IntusWindows.Sales.Order.Domain.Entities.Order;
 namespace IntusWindows.Sales.Order.Infrastructure;
 
 public class Context : DbContext
@@ -12,6 +12,12 @@ public class Context : DbContext
     public DbSet<Dimension> Dimensions { get; set; }
 
     public DbSet<Window> Windows { get; set; }
+
+    public DbSet<State> States { get; set; }
+
+    public DbSet<Ordr> Orders { get; set; }
+
+
 
     public Context() => this.Database.Migrate();
 
@@ -32,6 +38,8 @@ public class Context : DbContext
         modelBuilder.ApplyConfiguration(new DimensionCfg());
         modelBuilder.ApplyConfiguration(new ElementCfg());
         modelBuilder.ApplyConfiguration(new WindowCfg());
+        modelBuilder.ApplyConfiguration(new StateCfg());
+        modelBuilder.ApplyConfiguration(new OrderCfg());
 
     }
 }

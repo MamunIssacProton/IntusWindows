@@ -8,5 +8,7 @@ public interface IWindowRepository : IBaseContextRepository
 
     Task<IReadOnlyList<Window>> GetAllWindowsListAsync();
 
+    Task<Window> GetWindowByIdAsync(Guid id);
+
 }
 

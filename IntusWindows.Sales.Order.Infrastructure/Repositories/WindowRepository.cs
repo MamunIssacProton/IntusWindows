@@ -1,6 +1,7 @@
 ﻿using System;
 using IntusWindows.Sales.Contract.DTOs;
 using IntusWindows.Sales.Order.Domain.Entities;
+using IntusWindows.Sales.Order.Domain.Exceptions;
 using IntusWindows.Sales.Order.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,6 +24,14 @@ public sealed class WindowRepository : BaseContextRepository, IWindowRepository
     {
         return context.Windows.Include(x => x.SubElements).ThenInclude(x => x.dimension).ToList().AsReadOnly();
 
+    }
+
+    public async Task<Window> GetWindowByIdAsync(Guid id)
+    {
+        var window = await context.Windows.Where(x => x.Id == id).FirstOrDefaultAsync();
+        if (window is null)
+            throw new NotFoundException($"no window has found with id {id}");
+        return window;
     }
 }
 
