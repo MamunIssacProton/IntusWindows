@@ -6,4 +6,29 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="Entities\" />
+    <None Remove="Enums\" />
+    <None Remove="Events\" />
+    <None Remove="Exceptions\" />
+    <None Remove="Utils\" />
+    <None Remove="ValueObjects\" />
+    <None Remove="Events\Dimension\" />
+    <None Remove="Events\Element\" />
+    <None Remove="Events\Window\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Entities\" />
+    <Folder Include="Enums\" />
+    <Folder Include="Events\" />
+    <Folder Include="Exceptions\" />
+    <Folder Include="Utils\" />
+    <Folder Include="ValueObjects\" />
+    <Folder Include="Events\Dimension\" />
+    <Folder Include="Events\Element\" />
+    <Folder Include="Events\Window\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IntusWindows.Sales.Shared\IntusWindows.Sales.Shared.csproj" />
+  </ItemGroup>
 </Project>
