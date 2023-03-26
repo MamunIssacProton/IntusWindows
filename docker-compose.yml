@@ -1,0 +1,49 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:14.1-alpine
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d/
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: db
+  # mssql:    
+  #   container_name: sqlefcoredb
+  #   image: microsoft/mssql-server-linux
+  #   ports:
+  #     - "1433:1433"
+  #   volumes:
+  #     - ./mssql/data:/var/opt/mssql/data
+  #     - .mssql/log:/var/opt/mssql/log
+  #     - .mssql/secrets:/var/opt/mssql/secrets
+  #   environment:
+  #     SA_PASSWORD: "password@123!"
+  #     ACCEPT_EULA: "Y"
+
+# sudo docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=password@123!" -p 1433:1433 --name sql1 --hostname sql1 -d mcr.microsoft.com/mssql/server:2022-latest
+#     version: "3"
+# services:
+  # sql-server:
+  #   image: mcr.microsoft.com/mssql/server:2022-latest
+  #   hostname: sql-server
+  #   container_name: sql-server
+  #   platform: linux
+  #   ports:
+  #     - "1433:1433"
+  #   environment:
+  #     - ACCEPT_EULA=Y
+  #     - SA_PASSWORD=sqlVerser!
+  #     - MSSQL_PID=Express
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: 'rabbitmq'
+    ports:
+        - 5672:5672
+        - 15672:15672
+    volumes:
+        - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+        - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq

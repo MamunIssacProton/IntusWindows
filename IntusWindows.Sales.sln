@@ -1,0 +1,61 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33502.453
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Order", "Order", "{FE862DBF-814F-4238-BAB9-745A093D84AE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntusWindows.Sales.Shared", "IntusWindows.Sales.Shared\IntusWindows.Sales.Shared.csproj", "{FFADC074-84D5-4A73-874C-EE68F5D4B4CD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntusWindows.Sales.Contract", "IntusWindows.Sales.Contract\IntusWindows.Sales.Contract.csproj", "{0D72BAA1-FBBD-426F-9F6C-D2EEA49F826E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntusWindows.Sales.Order.Api", "IntusWindows.Sales.Order.Api\IntusWindows.Sales.Order.Api.csproj", "{5FF7AE34-E9BB-4BD5-AA2E-1B2429F29C39}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntusWindows.Sales.Order.Domain", "IntusWindows.Sales.Order.Domain\IntusWindows.Sales.Order.Domain.csproj", "{40177711-3059-4F2C-A1F4-5D3B6884783E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntusWindows.Sales.Order.Infrastructure", "IntusWindows.Sales.Order.Infrastructure\IntusWindows.Sales.Order.Infrastructure.csproj", "{9926395A-CA82-4350-ACE6-5827DD357299}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7BCF9921-1831-4A7E-92A1-DD05A92EA1C3}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FFADC074-84D5-4A73-874C-EE68F5D4B4CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFADC074-84D5-4A73-874C-EE68F5D4B4CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFADC074-84D5-4A73-874C-EE68F5D4B4CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFADC074-84D5-4A73-874C-EE68F5D4B4CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D72BAA1-FBBD-426F-9F6C-D2EEA49F826E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D72BAA1-FBBD-426F-9F6C-D2EEA49F826E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D72BAA1-FBBD-426F-9F6C-D2EEA49F826E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D72BAA1-FBBD-426F-9F6C-D2EEA49F826E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FF7AE34-E9BB-4BD5-AA2E-1B2429F29C39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FF7AE34-E9BB-4BD5-AA2E-1B2429F29C39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FF7AE34-E9BB-4BD5-AA2E-1B2429F29C39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FF7AE34-E9BB-4BD5-AA2E-1B2429F29C39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40177711-3059-4F2C-A1F4-5D3B6884783E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40177711-3059-4F2C-A1F4-5D3B6884783E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40177711-3059-4F2C-A1F4-5D3B6884783E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40177711-3059-4F2C-A1F4-5D3B6884783E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9926395A-CA82-4350-ACE6-5827DD357299}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9926395A-CA82-4350-ACE6-5827DD357299}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9926395A-CA82-4350-ACE6-5827DD357299}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9926395A-CA82-4350-ACE6-5827DD357299}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5FF7AE34-E9BB-4BD5-AA2E-1B2429F29C39} = {FE862DBF-814F-4238-BAB9-745A093D84AE}
+		{40177711-3059-4F2C-A1F4-5D3B6884783E} = {FE862DBF-814F-4238-BAB9-745A093D84AE}
+		{9926395A-CA82-4350-ACE6-5827DD357299} = {FE862DBF-814F-4238-BAB9-745A093D84AE}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {92C4EBA7-4ED2-4A1F-88CC-F158A56DBBCA}
+	EndGlobalSection
+EndGlobal
