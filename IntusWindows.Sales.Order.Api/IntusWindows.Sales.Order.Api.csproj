@@ -19,6 +19,7 @@
     <None Remove="Commands\Update\" />
     <None Remove="Commands\Create\" />
     <None Remove="Queries\" />
+    <None Remove="Commands\Delete\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ApplicationServices\" />
@@ -26,6 +27,7 @@
     <Folder Include="Commands\Update\" />
     <Folder Include="Commands\Create\" />
     <Folder Include="Queries\" />
+    <Folder Include="Commands\Delete\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\IntusWindows.Sales.Shared\IntusWindows.Sales.Shared.csproj">

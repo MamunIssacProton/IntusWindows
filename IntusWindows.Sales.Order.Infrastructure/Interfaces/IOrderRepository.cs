@@ -20,7 +20,7 @@ public interface IOrderRepository: IBaseContextRepository
 
 	Task<ApiResultDTO> DeleteWindowFromOrderAsync(Guid orderId, Guid windowId);
 
-	Task<ApiResultDTO> DeleteElementFromOrderAsync(Guid orderId, Guid windowId, string elementId);
+	Task<ApiResultDTO> DeleteElementFromOrderAsync(Guid orderId, Guid windowId, Guid elementId);
 
 	Task<IReadOnlyList<Ordr>> GetOrdersListAsync();
 }

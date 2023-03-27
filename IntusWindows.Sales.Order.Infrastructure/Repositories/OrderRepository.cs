@@ -49,14 +49,25 @@ namespace IntusWindows.Sales.Order.Infrastructure.Repositories
             return new ApiResultDTO(true, $"dimension successfully updated");
         }
 
-        public Task<ApiResultDTO> ChangeOrderNameByIdAsync(Guid orderId, string orderName)
+        public async Task<ApiResultDTO> ChangeOrderNameByIdAsync(Guid orderId, string orderName)
         {
-            throw new NotImplementedException();
+            var order = await context.Orders.Where(x => x.Id == orderId).FirstOrDefaultAsync();
+            if (order is null)
+                return new ApiResultDTO(false, $"no order has found with id : {orderId}");
+
+            order.UpdateOrderName(OrderName.Create(orderName));
+            
+            await context.SaveChangesAsync();
+
+
+
+            return new ApiResultDTO(true,$"successfully order name changed to : {order.OrderName.Value}");
         }
 
-        public Task<ApiResultDTO> ChangeStateInOrderByIdAsync(Guid orderId, string desiredStateId)
+        public async Task<ApiResultDTO> ChangeStateInOrderByIdAsync(Guid orderId, string desiredStateId)
         {
-            throw new NotImplementedException();
+            await context.SaveChangesAsync();
+            return new ApiResultDTO(true,"");
         }
 
         public async Task<ApiResultDTO> CreateNewOrderAsync(Domain.Entities.Order order)
@@ -67,19 +78,66 @@ namespace IntusWindows.Sales.Order.Infrastructure.Repositories
             return new ApiResultDTO(true,$"{order.OrderName.Value} has sucessfully created with id : {order.Id}");
         }
 
-        public Task<ApiResultDTO> DeleteElementFromOrderAsync(Guid orderId, Guid windowId, string elementId)
+        public async Task<ApiResultDTO> DeleteElementFromOrderAsync(Guid orderId, Guid windowId, Guid elementId)
         {
-            throw new NotImplementedException();
+            var order = await context.Orders.Include(x => x.Windows)
+                                            .ThenInclude(x => x.SubElements)
+                                            .ThenInclude(x => x.dimension)
+                                            .Where(x => x.Id == orderId)
+                                            .FirstOrDefaultAsync();
+
+            if (order is null)
+                return new ApiResultDTO(false, $"no order has found with id : {orderId}");
+
+            var window = order.Windows.Where(x => x.Id == windowId).FirstOrDefault();
+
+            if (window is null)
+                return new ApiResultDTO(false, $"no window has found with id : {windowId} on the order : {orderId}");
+
+            Element element = window.SubElements.Where(x => x.Id == elementId).FirstOrDefault();
+            if (element is null)
+                return new ApiResultDTO(false, $"no element has found in window : {elementId}");
+
+            window.SubElements.Remove(element);
+
+
+            await context.SaveChangesAsync();
+
+            return new ApiResultDTO(true,$"element has sucessfully removed from order {orderId}");
         }
 
-        public Task<ApiResultDTO> DeleteOrderByIdAsync(Guid orderId)
+        public async Task<ApiResultDTO> DeleteOrderByIdAsync(Guid orderId)
         {
-            throw new NotImplementedException();
+           var order= await context.Orders.Where(x => x.Id == orderId).FirstOrDefaultAsync();
+            if (order is null)
+                return new ApiResultDTO(false, $"no order has found with id : {orderId}");
+             context.Orders.Remove(order);
+
+            await context.SaveChangesAsync();
+            return new ApiResultDTO(true,$"sucessfully deleted order-{order.Id}");
         }
 
-        public Task<ApiResultDTO> DeleteWindowFromOrderAsync(Guid orderId, Guid windowId)
+
+        public async Task<ApiResultDTO> DeleteWindowFromOrderAsync(Guid orderId, Guid windowId)
         {
-            throw new NotImplementedException();
+            var order = await context.Orders.Include(x=>x.Windows)
+                                            .ThenInclude(x=>x.SubElements)
+                                            .ThenInclude(x=>x.dimension)
+                                            .Where(x => x.Id == orderId)
+                                            .FirstOrDefaultAsync();
+
+            if (order is null)
+                return new ApiResultDTO(false,$"no order has found with id : {orderId}");
+
+            var window = order.Windows.Where(x => x.Id == windowId).FirstOrDefault();
+            if (window is null)
+                return new ApiResultDTO(false,$"no windows has found in order with window id : {windowId}");
+
+            order.Windows.Remove(window);
+
+            await context.SaveChangesAsync();
+
+            return new ApiResultDTO(true,$"successfully removed window {windowId} from order");
         }
 
         public async Task<IReadOnlyList<Domain.Entities.Order>> GetOrdersListAsync()

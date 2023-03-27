@@ -2,6 +2,7 @@
 using IntusWindows.Sales.Infrastructure.Interfaces;
 using IntusWindows.Sales.Order.Api.Commands;
 using IntusWindows.Sales.Order.Api.Commands.Create;
+using IntusWindows.Sales.Order.Api.Commands.Delete;
 using IntusWindows.Sales.Order.Api.Commands.Update;
 using IntusWindows.Sales.Order.Api.Queries;
 using IntusWindows.Sales.Order.Domain.Entities;
@@ -125,6 +126,15 @@ public class ApplicationService
         return await this.orderRepository.ChangeDimensionInOrderByIdAsync(command.OrderId,command.WindowId,
                                                                           command.ExistDimensionId,command.DisiredDimensionId);
     }
+
+
+    public async Task<ApiResultDTO> HandleCommand(ChangeOrderNameCommand command)
+    {
+
+        return await this.orderRepository.ChangeOrderNameByIdAsync(OrderId.Create(command.Id), command.OrderName);
+    }
+
+
     public async Task<ElementDTO?> HandleQuery(GetElementQuery query)
                                    => await this.elementRepository.GetElementsDTOByIdAsync(query.Id);
 
@@ -151,6 +161,22 @@ public class ApplicationService
         state.ChangeStateName(StateName.Create(command.Name));
 
         return await this.stateRepository.ChangeStateNameAsync(state);
+    }
+
+
+    public async Task<ApiResultDTO> HandleCommand(DeleteElementFromOrderCommand command)
+    {
+        return await this.orderRepository.DeleteElementFromOrderAsync(command.Id, command.WindowId, command.ElementId);
+    }
+
+    public async Task<ApiResultDTO> HandleCommand(DeleteOrderCommand command)
+    {
+       return await this.orderRepository.DeleteOrderByIdAsync(command.OrderId);
+    }
+
+    public async Task<ApiResultDTO> HandleCommand(DeleteWindowFromOrderCommand command)
+    {
+        return await this.orderRepository.DeleteWindowFromOrderAsync(command.OrderId, command.WindowId);
     }
 }
 
