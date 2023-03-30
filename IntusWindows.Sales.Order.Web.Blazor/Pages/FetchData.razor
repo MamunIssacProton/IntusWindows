@@ -1,0 +1,79 @@
+﻿@page "/fetchdata"
+@inject IDimensionService service;
+@using IntusWindows.Sales.Contract.DTOs;
+<PageTitle>Weather forecast</PageTitle>
+
+<h1>Weather forecast</h1>
+
+<p>This component demonstrates fetching data from the server. @dto.Message res : @dto.Ok msg : @msg</p>
+<input @bind="@dimension.Title" type="text" />
+<input @bind="@dimension.Width" type="number"/>
+
+
+<input @bind="@dimension.Height" type="number"/>
+<button @onclick="async()=>await CreateDimension()">Create</button>
+
+@if (dimensions == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Height</th>
+                <th>Width</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var dimension in dimensions)
+            {
+                <tr>
+                    <td>@dimension.id</td>
+                    <td>@dimension.title</td>
+                    <td>@dimension.height</td>
+                    <td>@dimension.width</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    string msg;
+    private WeatherForecast[]? forecasts;
+    Dimension dimension { get; set; } = new Dimension();
+    ApiResultDTO dto { get; set; } = new ApiResultDTO(false,null);
+    private IReadOnlyList<DimensionDTO> dimensions;
+    protected override async Task OnInitializedAsync()
+    {
+        // forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
+        dimensions = await service.GetAllDimensionsListAsync();
+        StateHasChanged();
+    }
+
+
+    public async ValueTask<ApiResultDTO> CreateDimension()
+    {
+       
+        dimension.elementType = Contract.Enums.ElementType.Window;
+        dto =await this.service.SaveDimensionAsync(dimension);
+        StateHasChanged();
+        return dto;
+
+    }
+    public class WeatherForecast
+    {
+        public DateOnly Date { get; set; }
+
+        public int TemperatureC { get; set; }
+
+        public string? Summary { get; set; }
+
+        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    }
+    }
+

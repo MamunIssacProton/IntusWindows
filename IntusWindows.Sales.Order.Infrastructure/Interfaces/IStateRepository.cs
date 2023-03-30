@@ -5,13 +5,13 @@ namespace IntusWindows.Sales.Order.Infrastructure.Interfaces;
 
 public interface IStateRepository: IBaseContextRepository
 {
-	Task<ApiResultDTO> CreateNewStateAsync(State state);
+	ValueTask<ApiResultDTO> CreateNewStateAsync(State state);
 
-	Task<IReadOnlyList<State>> GetAllStatesListAsync();
+	ValueTask<IReadOnlyList<State>> GetAllStatesListAsync();
 
-	Task<State> GetStateByIdAsync(Guid id);
+	ValueTask<State> GetStateByIdAsync(Guid id);
 
-	Task<ApiResultDTO> ChangeStateNameAsync(State state);
+	ValueTask<ApiResultDTO> ChangeStateNameAsync(State state);
 
 
 }

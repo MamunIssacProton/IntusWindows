@@ -8,13 +8,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace IntusWindows.Sales.Order.Infrastructure.Repositories;
 
-public class StateRepository:BaseContextRepository, IStateRepository
+public sealed class StateRepository:BaseContextRepository, IStateRepository
 {
 	public StateRepository(Context context):base(context)
 	{
 	}
 
-    public async Task<ApiResultDTO> ChangeStateNameAsync(State state)
+    public async ValueTask<ApiResultDTO> ChangeStateNameAsync(State state)
     {
         var result = await context.States.Where(x => x.Id == state.Id).FirstOrDefaultAsync();
         if (result is null)
@@ -26,7 +26,7 @@ public class StateRepository:BaseContextRepository, IStateRepository
     }
 
 
-    public async Task<ApiResultDTO> CreateNewStateAsync(State state)
+    public async ValueTask<ApiResultDTO> CreateNewStateAsync(State state)
 
     {
         await context.States.AddAsync(state);
@@ -34,13 +34,13 @@ public class StateRepository:BaseContextRepository, IStateRepository
         return new ApiResultDTO(true,$"{state.Name.Value} saved successfully");
     }
 
-    public async Task<IReadOnlyList<State>> GetAllStatesListAsync()
+    public async ValueTask<IReadOnlyList<State>> GetAllStatesListAsync()
     {
         var states=  await context.States.ToListAsync();
         return states.AsReadOnly();
     }
 
-    public async Task<State> GetStateByIdAsync(Guid id)
+    public async ValueTask<State> GetStateByIdAsync(Guid id)
     {
        var state= await context.States.Where(x => x.Id == id).FirstOrDefaultAsync();
         if (state is null)

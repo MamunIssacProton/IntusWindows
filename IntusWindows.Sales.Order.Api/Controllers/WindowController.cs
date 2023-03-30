@@ -17,7 +17,7 @@ public class WindowController : ControllerBase
         applicationService = service;
     }
     [HttpPost("create")]
-    public async Task<ApiResultDTO> Create(CreateWindowCommand command)
+    public async ValueTask<ApiResultDTO> Create(CreateWindowCommand command)
     {
         try
         {
@@ -30,6 +30,6 @@ public class WindowController : ControllerBase
     }
 
     [HttpGet("/getWindowsList")]
-    public async Task<IReadOnlyList<Window>> GetWindowsAsync() => await this.applicationService.GetAllWindowQuery();
+    public async ValueTask<IReadOnlyList<Window>> GetWindowsAsync() => await this.applicationService.GetAllWindowQuery();
 }
 

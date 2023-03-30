@@ -20,8 +20,12 @@ public class DimensionController : ControllerBase
 
     }
 
+    [HttpGet("/dimensions")]
+    public async ValueTask<IReadOnlyList<DimensionDTO>> GetDimensionsAsync()
+                                                  => await this.applicationService.GetDimensionsAsync();
+
     [HttpPost("/create")]
-    public async Task<ApiResultDTO> Create(CreateDimensionCommand command)
+    public async ValueTask<ApiResultDTO> Create(CreateDimensionCommand command)
     {
 
         try
@@ -43,7 +47,7 @@ public class DimensionController : ControllerBase
 
     [HttpPut("/update")]
 
-    public async Task<ApiResultDTO> Update(UpdateDimensionCommand command)
+    public async ValueTask<ApiResultDTO> Update(UpdateDimensionCommand command)
     {
         try
         {

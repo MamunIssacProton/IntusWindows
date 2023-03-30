@@ -5,15 +5,15 @@ namespace IntusWindows.Sales.Order.Infrastructure.Interfaces;
 
 public interface IElementRepository : IBaseContextRepository
 {
-    Task<ApiResultDTO> SaveElementAsync(Element element, string dimensionId);
+    ValueTask<ApiResultDTO> SaveElementAsync(Element element, string dimensionId);
 
-    Task<ApiResultDTO> DeleteElementAsync(Guid id);
+    ValueTask<ApiResultDTO> DeleteElementAsync(Guid id);
 
-    Task<IReadOnlyList<Element>> GetElementsListAsync();
+    ValueTask<IReadOnlyList<Element>> GetElementsListAsync();
 
-    Task<Element?> GetElementByIdAsync(Guid id);
+    ValueTask<Element?> GetElementByIdAsync(Guid id);
 
-    Task<ElementDTO?> GetElementsDTOByIdAsync(Guid id);
+    ValueTask<ElementDTO?> GetElementsDTOByIdAsync(Guid id);
 
 }
 

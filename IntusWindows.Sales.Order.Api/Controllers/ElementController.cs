@@ -19,7 +19,7 @@ public class ElementController : ControllerBase
 
     [HttpPost(Name = "create")]
 
-    public async Task<IActionResult> Create(CreateElementCommand command)
+    public async ValueTask<IActionResult> Create(CreateElementCommand command)
     {
         try
         {
@@ -34,7 +34,7 @@ public class ElementController : ControllerBase
 
 
     [HttpPut(Name = "/elementsById")]
-    public async Task<ElementDTO?> GetElementByIdAsync(GetElementQuery query)
+    public async ValueTask<ElementDTO?> GetElementByIdAsync(GetElementQuery query)
                                    => await this.applicationService.HandleQuery(query);
 
 

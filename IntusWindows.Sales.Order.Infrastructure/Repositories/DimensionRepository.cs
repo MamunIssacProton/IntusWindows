@@ -14,19 +14,19 @@ public sealed class DimensionRepository : BaseContextRepository, IDimensionRepos
     }
 
 
-    public async Task<IReadOnlyList<Dimension>> GetAllDimensionsListAsync()
+    public async ValueTask<IReadOnlyList<DimensionDTO>> GetAllDimensionsListAsync()
     {
-        return await context.Dimensions.ToListAsync();
+        return await context.Dimensions.AsNoTracking().Select(x=>new DimensionDTO(x.Id,x.Width,x.Height,x.Title)).ToListAsync();
     }
 
-    public async Task<ApiResultDTO> SaveDimensionAsync(Dimension dimension)
+    public async ValueTask<ApiResultDTO> SaveDimensionAsync(Dimension dimension)
     {
         await context.Dimensions.AddAsync(dimension);
         await context.SaveChangesAsync();
         return new ApiResultDTO(true, dimension.Id);
     }
 
-    public async Task<Dimension?> GetDimensionByIdAsync(string id)
+    public async ValueTask<Dimension?> GetDimensionByIdAsync(string id)
     {
         var dimension = await context.Dimensions.Where(x => x.Id == id).FirstOrDefaultAsync();
         if (dimension != null)
@@ -35,7 +35,7 @@ public sealed class DimensionRepository : BaseContextRepository, IDimensionRepos
         return null;
     }
 
-    public async Task<ApiResultDTO> UpdateDimensionAsync(string id, decimal height, decimal width, string title)
+    public async ValueTask<ApiResultDTO> UpdateDimensionAsync(string id, decimal height, decimal width, string title)
     {
         var dimension = await context.Dimensions.Where(x => x.Id == id).FirstOrDefaultAsync();
         if (dimension is null)

@@ -5,13 +5,13 @@ namespace IntusWindows.Sales.Order.Infrastructure.Interfaces;
 
 public interface IDimensionRepository : IBaseRepository
 {
-    public Task<IReadOnlyList<Dimension>> GetAllDimensionsListAsync();
+    public ValueTask<IReadOnlyList<DimensionDTO>> GetAllDimensionsListAsync();
 
-    public Task<ApiResultDTO> SaveDimensionAsync(Dimension dimension);
+    public ValueTask<ApiResultDTO> SaveDimensionAsync(Dimension dimension);
 
-    public Task<Dimension?> GetDimensionByIdAsync(string id);
+    public ValueTask<Dimension?> GetDimensionByIdAsync(string id);
 
-    public Task<ApiResultDTO> UpdateDimensionAsync(string id, decimal height, decimal width, string title);
+    public ValueTask<ApiResultDTO> UpdateDimensionAsync(string id, decimal height, decimal width, string title);
 
 }
 

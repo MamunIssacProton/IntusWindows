@@ -16,23 +16,23 @@ public sealed class ElementRepository : BaseContextRepository, IElementRepositor
 
     }
 
-    public Task<ApiResultDTO> DeleteElementAsync(Guid id)
+    public ValueTask<ApiResultDTO> DeleteElementAsync(Guid id)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<IReadOnlyList<Element>> GetElementsListAsync()
+    public async ValueTask<IReadOnlyList<Element>> GetElementsListAsync()
     {
         return context.Elements.Include(x => x.dimension).ToList().AsReadOnly();
     }
 
-    public async Task<ApiResultDTO> SaveElementAsync(Element element, string dimensionId)
+    public async ValueTask<ApiResultDTO> SaveElementAsync(Element element, string dimensionId)
     {
         await context.Elements.AddAsync(element);
         await context.SaveChangesAsync();
         return new ApiResultDTO(true, element.Id.ToString());
     }
-    public async Task<Element?> GetElementByIdAsync(Guid id)
+    public async ValueTask<Element?> GetElementByIdAsync(Guid id)
     {
         var data = context.Elements.Include(x => x.dimension).Where(x => x.Id == id).FirstOrDefault();
         //Console.WriteLine($"got data : {data.Id}");
@@ -42,7 +42,7 @@ public sealed class ElementRepository : BaseContextRepository, IElementRepositor
         return null;
     }
 
-    public async Task<ElementDTO?> GetElementsDTOByIdAsync(Guid id)
+    public async ValueTask<ElementDTO?> GetElementsDTOByIdAsync(Guid id)
     {
         var data = context.Elements.AsNoTracking().Where(x => x.Id == id).Include(x => x.dimension).Select(x => new
         {

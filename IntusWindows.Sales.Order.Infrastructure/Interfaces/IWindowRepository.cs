@@ -4,11 +4,11 @@ namespace IntusWindows.Sales.Order.Infrastructure.Interfaces;
 
 public interface IWindowRepository : IBaseContextRepository
 {
-    Task<ApiResultDTO> AddWindow(Window window);
+    ValueTask<ApiResultDTO> AddWindow(Window window);
 
-    Task<IReadOnlyList<Window>> GetAllWindowsListAsync();
+    ValueTask<IReadOnlyList<Window>> GetAllWindowsListAsync();
 
-    Task<Window> GetWindowByIdAsync(Guid id);
+    ValueTask<Window> GetWindowByIdAsync(Guid id);
 
 }
 

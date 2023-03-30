@@ -18,44 +18,44 @@ public class OrderController : ControllerBase
 	}
 
 	[HttpGet("list")]
-	public async Task<IReadOnlyList<Domain.Entities.Order>> GetOrderListAsync()
+	public async ValueTask<IReadOnlyList<Domain.Entities.Order>> GetOrderListAsync()
 														 => await this.applicationService.GetOrdersListAsync();
 
 
 	[HttpPost("create")]
-	public async Task<ApiResultDTO> GenerateNewOrderAsync(CreateOrderCommand command)
+	public async ValueTask<ApiResultDTO> GenerateNewOrderAsync(CreateOrderCommand command)
 
 														  => await this.applicationService.HandleCommand(command);
 	
 
 	[HttpPut("changeDimension")]
-	public async Task<ApiResultDTO> ChangeDimensionInOrderAsync(ChangeDimensionInOrderCommand command)
+	public async ValueTask<ApiResultDTO> ChangeDimensionInOrderAsync(ChangeDimensionInOrderCommand command)
 
 														       => await this.applicationService.HandleCommand(command);
 	
 
 	[HttpPut("changeOrderName")]
-	public async Task<ApiResultDTO> ChangeOrderName(ChangeOrderNameCommand command)
+	public async ValueTask<ApiResultDTO> ChangeOrderName(ChangeOrderNameCommand command)
 
 													=> await this.applicationService.HandleCommand(command);
 	
 
 	[HttpDelete("element")]
-	public async Task<ApiResultDTO> DeleteElementFromOrder(DeleteElementFromOrderCommand command)
+	public async ValueTask<ApiResultDTO> DeleteElementFromOrder(DeleteElementFromOrderCommand command)
 
 														 =>  await this.applicationService.HandleCommand(command);
 
 
 
 	[HttpDelete("window")]
-	public async Task<ApiResultDTO> DeleteWindowFromOrder(DeleteWindowFromOrderCommand command)
+	public async ValueTask<ApiResultDTO> DeleteWindowFromOrder(DeleteWindowFromOrderCommand command)
 
 														 => await this.applicationService.HandleCommand(command);
 
 
 	[HttpDelete]
 
-	public async Task<ApiResultDTO> DeleteOrder(DeleteOrderCommand command)
+	public async ValueTask<ApiResultDTO> DeleteOrder(DeleteOrderCommand command)
 
 											=>  await this.applicationService.HandleCommand(command);
 	

@@ -16,7 +16,7 @@ public class StateController:ControllerBase
 	}
 
 	[HttpPost("create")]
-	public async Task<ApiResultDTO> Create(CreateStateCommand command)
+	public async ValueTask<ApiResultDTO> Create(CreateStateCommand command)
 	{
 		try
 		{
@@ -30,7 +30,7 @@ public class StateController:ControllerBase
 	}
 
 	[HttpPut("update")]
-	public async Task<ApiResultDTO> Update(UpdateStateCommand command)
+	public async ValueTask<ApiResultDTO> Update(UpdateStateCommand command)
 	{
 		try
 		{

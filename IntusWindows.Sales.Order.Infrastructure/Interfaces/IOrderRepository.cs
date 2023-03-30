@@ -7,21 +7,21 @@ namespace IntusWindows.Sales.Infrastructure.Interfaces;
 
 public interface IOrderRepository: IBaseContextRepository
 {
-	Task<ApiResultDTO> CreateNewOrderAsync(Ordr order);
+	ValueTask<ApiResultDTO> CreateNewOrderAsync(Ordr order);
 
-	Task<ApiResultDTO> ChangeOrderNameByIdAsync(Guid orderId, string orderName);
+	ValueTask<ApiResultDTO> ChangeOrderNameByIdAsync(Guid orderId, string orderName);
 
-	Task<ApiResultDTO> ChangeStateInOrderByIdAsync(Guid orderId, string desiredStateId);
+	ValueTask<ApiResultDTO> ChangeStateInOrderByIdAsync(Guid orderId, string desiredStateId);
 
-	Task<ApiResultDTO> ChangeDimensionInOrderByIdAsync(Guid orderId, Guid windowId, string existDimensionId,
+	ValueTask<ApiResultDTO> ChangeDimensionInOrderByIdAsync(Guid orderId, Guid windowId, string existDimensionId,
 														string desiredDimensionId);
 
-	Task<ApiResultDTO> DeleteOrderByIdAsync(Guid orderId);
+	ValueTask<ApiResultDTO> DeleteOrderByIdAsync(Guid orderId);
 
-	Task<ApiResultDTO> DeleteWindowFromOrderAsync(Guid orderId, Guid windowId);
+	ValueTask<ApiResultDTO> DeleteWindowFromOrderAsync(Guid orderId, Guid windowId);
 
-	Task<ApiResultDTO> DeleteElementFromOrderAsync(Guid orderId, Guid windowId, Guid elementId);
+	ValueTask<ApiResultDTO> DeleteElementFromOrderAsync(Guid orderId, Guid windowId, Guid elementId);
 
-	Task<IReadOnlyList<Ordr>> GetOrdersListAsync();
+	ValueTask<IReadOnlyList<Ordr>> GetOrdersListAsync();
 }
 

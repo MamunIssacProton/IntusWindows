@@ -35,7 +35,7 @@ public class ApplicationService
 
     }
 
-    public async Task HandleCommand(CreateElementCommand command)
+    public async ValueTask HandleCommand(CreateElementCommand command)
     {
         var dimension = await dimensionRepository.GetDimensionByIdAsync(command.DimensionId);
         if (dimension == null)
@@ -54,7 +54,7 @@ public class ApplicationService
     }
 
 
-    public async Task<ApiResultDTO> HandleCommand(CreateDimensionCommand command)
+    public async ValueTask<ApiResultDTO> HandleCommand(CreateDimensionCommand command)
     {
         var dimension = new Dimension(DimensionId.Create(command.elementType, command.Width, command.Height));
         dimension.SetHeight(Height.Create(command.elementType, command.Height));
@@ -66,7 +66,7 @@ public class ApplicationService
 
     }
 
-    public async Task<ApiResultDTO> HandleCommand(CreateWindowCommand command)
+    public async ValueTask<ApiResultDTO> HandleCommand(CreateWindowCommand command)
     {
         Window window = new Window(WindowId.Create(command.Id));
         window.SetWindowName(WindowName.Create(command.Title));
@@ -86,7 +86,7 @@ public class ApplicationService
 
     }
 
-    public async Task<ApiResultDTO> HandleCommand(CreateStateCommand command)
+    public async ValueTask<ApiResultDTO> HandleCommand(CreateStateCommand command)
     {
         State state = new State(StateId.Create(command.Id));
         state.ChangeStateName(StateName.Create(command.Name));
@@ -96,7 +96,7 @@ public class ApplicationService
 
 
 
-    public async Task<ApiResultDTO> HandleCommand(CreateOrderCommand command)
+    public async ValueTask<ApiResultDTO> HandleCommand(CreateOrderCommand command)
     {
         Ordr order = new Ordr(OrderId.Create(command.Id));
         order.UpdateOrderName(OrderName.Create(command.OrderName));
@@ -121,39 +121,44 @@ public class ApplicationService
 
 
 
-    public async Task<ApiResultDTO> HandleCommand(ChangeDimensionInOrderCommand command)
+    public async ValueTask<ApiResultDTO> HandleCommand(ChangeDimensionInOrderCommand command)
     {
         return await this.orderRepository.ChangeDimensionInOrderByIdAsync(command.OrderId,command.WindowId,
                                                                           command.ExistDimensionId,command.DisiredDimensionId);
     }
 
 
-    public async Task<ApiResultDTO> HandleCommand(ChangeOrderNameCommand command)
+    public async ValueTask<ApiResultDTO> HandleCommand(ChangeOrderNameCommand command)
     {
 
         return await this.orderRepository.ChangeOrderNameByIdAsync(OrderId.Create(command.Id), command.OrderName);
     }
 
 
-    public async Task<ElementDTO?> HandleQuery(GetElementQuery query)
+    public async ValueTask<ElementDTO?> HandleQuery(GetElementQuery query)
                                    => await this.elementRepository.GetElementsDTOByIdAsync(query.Id);
 
 
-    public async Task<IReadOnlyList<Window>> GetAllWindowQuery() =>
+    public async ValueTask<IReadOnlyList<Window>> GetAllWindowQuery() =>
                                              await this.windowRepository.GetAllWindowsListAsync();
 
 
-    public async Task<IReadOnlyList<Ordr>> GetOrdersListAsync() =>
+    public async ValueTask<IReadOnlyList<Ordr>> GetOrdersListAsync() =>
                                            await this.orderRepository.GetOrdersListAsync();
 
-    public async Task<ApiResultDTO> HandleCommand(UpdateDimensionCommand command)
+    public async ValueTask<IReadOnlyList<DimensionDTO>> GetDimensionsAsync()
+
+                                                  => await this.dimensionRepository.GetAllDimensionsListAsync();
+                                                    
+
+    public async ValueTask<ApiResultDTO> HandleCommand(UpdateDimensionCommand command)
     {
         return await this.dimensionRepository
                          .UpdateDimensionAsync(command.Id, command.Height, command.Width, command.Title);
     }
 
 
-    public async Task<ApiResultDTO> HandleCommand(UpdateStateCommand command)
+    public async ValueTask<ApiResultDTO> HandleCommand(UpdateStateCommand command)
     {
         var state = await this.stateRepository.GetStateByIdAsync(command.Id);
         if (state is null)
@@ -164,17 +169,17 @@ public class ApplicationService
     }
 
 
-    public async Task<ApiResultDTO> HandleCommand(DeleteElementFromOrderCommand command)
+    public async ValueTask<ApiResultDTO> HandleCommand(DeleteElementFromOrderCommand command)
     {
         return await this.orderRepository.DeleteElementFromOrderAsync(command.Id, command.WindowId, command.ElementId);
     }
 
-    public async Task<ApiResultDTO> HandleCommand(DeleteOrderCommand command)
+    public async ValueTask<ApiResultDTO> HandleCommand(DeleteOrderCommand command)
     {
        return await this.orderRepository.DeleteOrderByIdAsync(command.OrderId);
     }
 
-    public async Task<ApiResultDTO> HandleCommand(DeleteWindowFromOrderCommand command)
+    public async ValueTask<ApiResultDTO> HandleCommand(DeleteWindowFromOrderCommand command)
     {
         return await this.orderRepository.DeleteWindowFromOrderAsync(command.OrderId, command.WindowId);
     }
