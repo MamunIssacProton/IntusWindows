@@ -20,5 +20,9 @@ public static class DIExtensions
         return services;
     }
 
+    public static IServiceCollection AddHttpProgressBarService(this IServiceCollection services)
+    {
+       return services.AddScoped<IProgress<int>, Progress<int>>();
+    }
    
 }

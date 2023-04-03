@@ -1,6 +1,9 @@
 ﻿@page "/"
 @inject IDimensionService dimensionService;
-
+@inject IProgress<int> progressBar;
+<div>
+    <h6>Progress : @progress</h6>
+</div>
 <div class="dock">
     <ul>
         <li>
@@ -25,6 +28,7 @@
 
     private ElementReference elementElement;
 
+    int progress;
 
     private async Task HighlightImage(string id)
     {
@@ -39,4 +43,23 @@
 
 
     }
+    protected override void OnInitialized() 
+    {
+        dimensionService.ProgressChanged += UpdateProgress;
+    }
+
+    void UpdateProgress(int percent)
+    {
+        
+        progress = percent;
+        StateHasChanged();
+
+    }
+    protected override async Task OnInitializedAsync()
+    {
+       
+        await dimensionService.GetAllDimensionsListAsync(progressBar);
+       
+    }
+
 }

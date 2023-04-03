@@ -11,6 +11,7 @@ using Microsoft.JSInterop;
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
+builder.Services.AddHttpProgressBarService();
 builder.Services.AddHttpClients();
 
 await builder.Build().RunAsync();

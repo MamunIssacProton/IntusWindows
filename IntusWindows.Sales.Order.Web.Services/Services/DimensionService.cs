@@ -8,19 +8,36 @@ namespace IntusWindows.Sales.Order.Web.Services.Services;
 
 public  class DimensionService:BaseService,IDimensionService
 {
+
+
     public DimensionService(HttpClient client) : base(client)
     {
     }
-   
 
-    public async ValueTask<IReadOnlyList<DimensionDTO>> GetAllDimensionsListAsync()
+    public event Action<int> ProgressChanged;
+
+    public async ValueTask<IReadOnlyList<DimensionDTO>> GetAllDimensionsListAsync(IProgress<int> progress = null)
     {
-        var response = await client.GetAsync("/api/Dimension/list");
-        if (response.IsSuccessStatusCode)
+        var response = await client.GetAsync("/api/Dimension/list",HttpCompletionOption.ResponseContentRead);
+
+        var contentLength = response.Content.Headers.ContentLength;
+        var buffer = new byte[4096];
+        var stream = await response.Content.ReadAsStreamAsync();
+        var bytesRead = 0;
+        var totalBytesRead = 0;
+
+        while ((bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
         {
-            return  JsonConvert.DeserializeObject<IReadOnlyList<DimensionDTO>>(await response.Content.ReadAsStringAsync());
+            totalBytesRead += bytesRead;
+            if (contentLength.HasValue && progress != null)
+            {
+                var percentage = (int)Math.Round((double)totalBytesRead / contentLength.Value * 100);
+                progress.Report(percentage);
+                ProgressChanged.Invoke(percentage);
+               
+            }
         }
-        return new List<DimensionDTO>();
+       return JsonConvert.DeserializeObject<IReadOnlyList<DimensionDTO>>(Encoding.UTF8.GetString(buffer));
     }
 
     //public ValueTask<DimensionDTO?> GetDimensionByIdAsync(string id)

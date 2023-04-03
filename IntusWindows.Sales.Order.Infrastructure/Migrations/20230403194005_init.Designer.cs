@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace IntusWindows.Sales.Order.Infrastructure.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20230326125409_init")]
+    [Migration("20230403194005_init")]
     partial class init
     {
         /// <inheritdoc />
