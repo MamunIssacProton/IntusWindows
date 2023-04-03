@@ -1,5 +1,5 @@
 ﻿using System;
-namespace IntusWindows.Sales.Order.Domain.Exceptions;
+namespace IntusWindows.Sales.Contract.Exceptions;
 
 public class NotFoundException:Exception
 {

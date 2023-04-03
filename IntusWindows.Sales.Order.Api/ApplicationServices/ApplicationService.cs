@@ -121,10 +121,10 @@ public class ApplicationService
 
 
 
-    public async ValueTask<ApiResultDTO> HandleCommand(ChangeDimensionInOrderCommand command)
+    public async ValueTask<ApiResultDTO> HandleCommand(ChangeDimensionFromOrderCommand command)
     {
-        return await this.orderRepository.ChangeDimensionInOrderByIdAsync(command.OrderId,command.WindowId,
-                                                                          command.ExistDimensionId,command.DisiredDimensionId);
+        return await this.orderRepository.ChangeDimensionFromOrderByIdAsync(command.OrderId,command.WindowId,
+                                                                            command.CurrentDimensionId,command.NewDimensionId);
     }
 
 

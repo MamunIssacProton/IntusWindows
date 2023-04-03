@@ -1,10 +1,42 @@
 ﻿@page "/"
+@inject IDimensionService dimensionService;
 
-<PageTitle>Index</PageTitle>
+<div class="dock">
+    <ul>
+        <li>
+            <img src="icons/door.png" @ref="doorElement" onclick="@(async()=>await HighlightImage("door"))"/>
+        </li>
+        <li>
+            <img src="icons/window.png" @ref="windowElement"/>
+        </li>
+        <li>
+            <img  src="icons/handle.png" @ref="elementElement"/>
+        </li>
 
-<h1>Hello, world!</h1>
+    </ul>
 
-Welcome to your new app.
+</div>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+@code {
 
+    private ElementReference doorElement;
+
+    private ElementReference windowElement;
+
+    private ElementReference elementElement;
+
+
+    private async Task HighlightImage(string id)
+    {
+        ElementReference clickedImg = id switch
+        {
+            "door" => doorElement,
+            "window" => windowElement,
+            "handle" => elementElement,
+            _ => default
+        };
+        //await clickedImg.AddClass(JSRuntime, "active");
+
+
+    }
+}

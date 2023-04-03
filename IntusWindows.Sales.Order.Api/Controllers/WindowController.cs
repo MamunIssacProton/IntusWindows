@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace IntusWindows.Sales.Order.Api.Controllers;
 
-[ApiController]
-[Route("[controller]")]
+
+[Route("api/[controller]"), ApiController]
 public class WindowController : ControllerBase
 {
     readonly ApplicationService applicationService;
@@ -16,6 +16,7 @@ public class WindowController : ControllerBase
     {
         applicationService = service;
     }
+
     [HttpPost("create")]
     public async ValueTask<ApiResultDTO> Create(CreateWindowCommand command)
     {
@@ -29,7 +30,7 @@ public class WindowController : ControllerBase
         }
     }
 
-    [HttpGet("/getWindowsList")]
+    [HttpGet("list")]
     public async ValueTask<IReadOnlyList<Window>> GetWindowsAsync() => await this.applicationService.GetAllWindowQuery();
 }
 

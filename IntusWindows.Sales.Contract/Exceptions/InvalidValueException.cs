@@ -1,4 +1,4 @@
-﻿namespace IntusWindows.Sales.Order.Domain.Exceptions;
+﻿namespace IntusWindows.Sales.Contract.Exceptions;
 
 public class InvalidValueException : Exception
 {

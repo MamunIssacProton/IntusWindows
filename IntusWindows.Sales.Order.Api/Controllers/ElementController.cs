@@ -6,8 +6,9 @@ using IntusWindows.Sales.Order.Api.Queries;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IntusWindows.Sales.Order.Api.Controllers;
-[ApiController]
-[Route("[controller]")]
+
+[Route("api/[controller]"), ApiController]
+
 public class ElementController : ControllerBase
 {
     private ApplicationService applicationService { get; }
@@ -17,7 +18,7 @@ public class ElementController : ControllerBase
         this.applicationService = applicationService;
     }
 
-    [HttpPost(Name = "create")]
+    [HttpPost("create")]
 
     public async ValueTask<IActionResult> Create(CreateElementCommand command)
     {
@@ -33,7 +34,7 @@ public class ElementController : ControllerBase
     }
 
 
-    [HttpPut(Name = "/elementsById")]
+    [HttpGet("elementById")]
     public async ValueTask<ElementDTO?> GetElementByIdAsync(GetElementQuery query)
                                    => await this.applicationService.HandleQuery(query);
 

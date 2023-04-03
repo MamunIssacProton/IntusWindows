@@ -9,8 +9,9 @@ using IntusWindows.Sales.Order.Domain.Utils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IntusWindows.Sales.Order.Api.Controllers;
-[ApiController]
-[Route("{controller}")]
+
+[Route("api/[controller]"),ApiController]
+
 public class DimensionController : ControllerBase
 {
     readonly ApplicationService applicationService;
@@ -19,12 +20,14 @@ public class DimensionController : ControllerBase
         applicationService = service;
 
     }
-
-    [HttpGet("/dimensions")]
+    
+    [HttpGet("list")]
     public async ValueTask<IReadOnlyList<DimensionDTO>> GetDimensionsAsync()
                                                   => await this.applicationService.GetDimensionsAsync();
 
-    [HttpPost("/create")]
+
+
+    [HttpPost("create")]
     public async ValueTask<ApiResultDTO> Create(CreateDimensionCommand command)
     {
 
@@ -45,7 +48,8 @@ public class DimensionController : ControllerBase
         }
     }
 
-    [HttpPut("/update")]
+
+    [HttpPut("update")]
 
     public async ValueTask<ApiResultDTO> Update(UpdateDimensionCommand command)
     {
@@ -65,5 +69,8 @@ public class DimensionController : ControllerBase
             return new ApiResultDTO(false, ex.Message);
         }
     }
+
+
+
 }
 

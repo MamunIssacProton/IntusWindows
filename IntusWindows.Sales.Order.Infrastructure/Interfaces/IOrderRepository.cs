@@ -13,8 +13,8 @@ public interface IOrderRepository: IBaseContextRepository
 
 	ValueTask<ApiResultDTO> ChangeStateInOrderByIdAsync(Guid orderId, string desiredStateId);
 
-	ValueTask<ApiResultDTO> ChangeDimensionInOrderByIdAsync(Guid orderId, Guid windowId, string existDimensionId,
-														string desiredDimensionId);
+	ValueTask<ApiResultDTO> ChangeDimensionFromOrderByIdAsync(Guid orderId, Guid windowId,
+															  string CurrentDimensionId, string newDimensionId);
 
 	ValueTask<ApiResultDTO> DeleteOrderByIdAsync(Guid orderId);
 

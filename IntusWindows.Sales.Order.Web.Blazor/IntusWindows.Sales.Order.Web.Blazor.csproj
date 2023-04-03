@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
@@ -25,5 +25,21 @@
     <ProjectReference Include="..\IntusWindows.Sales.Contract\IntusWindows.Sales.Contract.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Components\" />
+    <None Remove="Components\Dimension\" />
+    <None Remove="ExtensionMethods\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Components\" />
+    <Folder Include="Components\Dimension\" />
+    <Folder Include="wwwroot\icons\" />
+    <Folder Include="ExtensionMethods\" />
+    <Folder Include="wwwroot\js\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="wwwroot\icons\" />
+    <Content Remove="wwwroot\js\" />
   </ItemGroup>
 </Project>

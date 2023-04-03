@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Net.Http.Json;
+using System.Text;
 using IntusWindows.Sales.Contract.DTOs;
 using IntusWindows.Sales.Contract.Models;
 using IntusWindows.Sales.Order.Web.Services.Interfaces;
@@ -14,7 +15,7 @@ public  class DimensionService:BaseService,IDimensionService
 
     public async ValueTask<IReadOnlyList<DimensionDTO>> GetAllDimensionsListAsync()
     {
-        var response = await client.GetAsync("/dimensions");
+        var response = await client.GetAsync("/api/Dimension/list");
         if (response.IsSuccessStatusCode)
         {
             return  JsonConvert.DeserializeObject<IReadOnlyList<DimensionDTO>>(await response.Content.ReadAsStringAsync());
@@ -22,21 +23,23 @@ public  class DimensionService:BaseService,IDimensionService
         return new List<DimensionDTO>();
     }
 
-    public ValueTask<DimensionDTO?> GetDimensionByIdAsync(string id)
-    {
-        throw new NotImplementedException();
-    }
+    //public ValueTask<DimensionDTO?> GetDimensionByIdAsync(string id)
+    //{
+    //    throw new NotImplementedException();
+    //}
 
     public async ValueTask<ApiResultDTO> SaveDimensionAsync(Dimension dimension)
     {
-      var response= await client.PostAsync("dimensions/create", new StringContent(JsonConvert.SerializeObject(dimension),Encoding.UTF8));
-     // response.EnsureSuccessStatusCode();
-       return JsonConvert.DeserializeObject<ApiResultDTO>(await response.Content.ReadAsStringAsync());
+        var response = await client.PostAsJsonAsync<Dimension>("/api/Dimension/create", dimension);
+       
+        return JsonConvert.DeserializeObject<ApiResultDTO>(await response.Content.ReadAsStringAsync());
     }
 
-    public ValueTask<ApiResultDTO> UpdateDimensionAsync(string id, decimal height, decimal width, string title)
+    public async ValueTask<ApiResultDTO> UpdateDimensionAsync(UpdateDimension dimension)
     {
-        throw new NotImplementedException();
+        var response = await client.PutAsJsonAsync<UpdateDimension>("/api/Dimension/update", dimension);
+        return JsonConvert.DeserializeObject<ApiResultDTO>(await response.Content.ReadAsStringAsync());
+       
     }
 }
 

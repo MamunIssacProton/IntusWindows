@@ -14,8 +14,8 @@ public sealed class OrderRepository : BaseContextRepository, IOrderRepository
     {
     }
 
-    public async ValueTask<ApiResultDTO> ChangeDimensionInOrderByIdAsync(Guid orderId, Guid windowId,
-                                                                    string existDimensionId, string desiredDimensionId)
+    public async ValueTask<ApiResultDTO> ChangeDimensionFromOrderByIdAsync(Guid orderId, Guid windowId,
+                                                                           string currentDimensionId, string newDimensionId)
     {
         Domain.Entities.Order order = await context.Orders.Include(x => x.Windows)
                                                           .ThenInclude(x => x.SubElements)
@@ -27,19 +27,19 @@ public sealed class OrderRepository : BaseContextRepository, IOrderRepository
             return new ApiResultDTO(false, $"no order has found with id {orderId}");
 
 
-        var dimension = await context.Dimensions.Where(x => x.Id == desiredDimensionId).FirstOrDefaultAsync();
+        var dimension = await context.Dimensions.Where(x => x.Id == newDimensionId).FirstOrDefaultAsync();
         if (dimension is null)
-            return new ApiResultDTO(false, $"no dimension has found with id : {desiredDimensionId}");
+            return new ApiResultDTO(false, $"no dimension has found with id : {newDimensionId}");
 
 
         Element element = order.Windows.Where(x => x.Id == windowId)
                                        .FirstOrDefault().SubElements
-                                       .Where(x => x.dimension.Id == existDimensionId)
+                                       .Where(x => x.dimension.Id == currentDimensionId)
                                        .FirstOrDefault();
 
 
         if (element is null)
-            return new ApiResultDTO(false, $"no element has found which cotains dimension id {existDimensionId}");
+            return new ApiResultDTO(false, $"no element has found which cotains dimension id {currentDimensionId}");
         element.ChangeDimension(dimension);
 
 

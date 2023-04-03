@@ -1,4 +1,4 @@
-﻿namespace IntusWindows.Sales.Order.Domain.Utils;
+﻿namespace IntusWindows.Sales.Contract.Utils;
 
 public class Constrains
 {

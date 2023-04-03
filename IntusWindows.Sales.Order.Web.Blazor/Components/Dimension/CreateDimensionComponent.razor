@@ -1,0 +1,34 @@
+﻿@page "/createDimension"
+@inject IDimensionService dimensionService;
+<DialogBase @ref="dialog" Title="Create new Dimension">
+    <FormBase T="Mapper.Dimension" HasDimensions="true" OnModelCreate="OnDimensionCreated" SaveButtonText="Create Dimension"></FormBase>
+</DialogBase>
+<label>@message</label>
+
+
+@code {
+    private DialogBase dialog;
+    string message;
+
+    async Task OnDimensionCreated(Mapper.Dimension dimension)
+    {
+      
+        ValidatorFactory.Validate(dimension);
+
+        var response = await dimensionService.SaveDimensionAsync(new Dimension(dimension.Title, dimension.Height, dimension.Width, dimension.ElementType));
+
+        dialog.CloseDialog();
+        message = $"{response.Ok} with {response.Message}";
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            dialog.Show();
+        }
+    }
+
+
+}
+

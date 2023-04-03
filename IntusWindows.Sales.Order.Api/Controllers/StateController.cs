@@ -5,8 +5,8 @@ using IntusWindows.Sales.Order.Api.Commands.Update;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IntusWindows.Sales.Order.Api.Controllers;
-[ApiController]
-[Route("[controller]")]
+
+[Route("api/[controller]"), ApiController]
 public class StateController:ControllerBase
 {
 	private readonly ApplicationService applicationService;

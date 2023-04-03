@@ -1,19 +1,54 @@
 ﻿@page "/counter"
-
+@using IntusWindows.Sales.Order.Web.Blazor.Components;
 <PageTitle>Counter</PageTitle>
 
 <h1>Counter</h1>
 
-<p role="status">Current count: @currentCount</p>
+<p role="status">Current count: @currentCount @name</p>
+<button class="btn btn-primary" @onclick="() => dialog.Show()">Open Dialog</button>
+<DialogBase @ref="dialog" Title="Example Dialog" OnSave="Create" IsSave="false">
+    <FormBase T="Mapper.State" OnModelCreate="OnTestDataCreated"></FormBase>
 
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+</DialogBase>
+
+@*<DialogBase Title="Create New Dimension" CreateButtonText="Create Now" OnCreate="@CreateItem"></DialogBase>
+    <button class="btn btn-primary" @onclick="() => dialog.Show()">Open Dialog</button>
+    <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>*@
 
 @code {
     private int currentCount = 0;
-
+    string name { get; set; }
     private void IncrementCount()
     {
         currentCount++;
     }
-}
+
+    private DialogBase dialog;
+
+    async Task Create()
+    {
+        Console.WriteLine("notified from dialoug");
+    }
+
+    async Task OnTestDataCreated(Mapper.State data)
+    {
+
+        Console.WriteLine($"got lamda data :  {data.Name}");
+        name = data.Name;
+        dialog.CloseDialog();
+
+
+    }
+    //private void CloseDialoug()
+    //{
+    //    var baseComponent = this.FindComponent<DialogBase>();
+    //    baseComponent.Instance.CloseDialoug();
+    //}
+    class Lamda
+    {
+        public string Title { get; set; }
+
+        public int Price { get; set; }
+    }
+    }
 

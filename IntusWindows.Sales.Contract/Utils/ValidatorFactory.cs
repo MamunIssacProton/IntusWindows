@@ -1,8 +1,9 @@
-﻿using IntusWindows.Sales.Order.Domain.Enums;
-using IntusWindows.Sales.Order.Domain.Exceptions;
-using IntusWindows.Sales.Order.Domain.ValueObjects;
+﻿using IntusWindows.Sales.Contract.Enums;
+using IntusWindows.Sales.Contract.Exceptions;
+using IntusWindows.Sales.Contract.Models.Map;
+using IntusWindows.Sales.Contract.Utils;
 
-namespace IntusWindows.Sales.Order.Domain.Utils;
+namespace IntusWindows.Sales.Contract.Utils;
 
 public class ValidatorFactory
 {
@@ -114,6 +115,44 @@ public class ValidatorFactory
     {
         if (!elementType.HasValue)
             throw new InvalidValueException("Element Type", "cannot be null or empty");
+    }
+
+    public static void Validate(Mapper.Dimension dimension)
+    {
+        ValidateString(propertyName: nameof(dimension.Title), value: dimension.Title);
+
+        ValidateWidth(elementType:dimension.ElementType, property: nameof(dimension.Width), value: dimension.Width);
+
+        ValidateHeight(elementType: dimension.ElementType, property: nameof(dimension.Height), value: dimension.Height);
+
+
+
+    }
+
+    public static void Validate(Mapper.Element element)
+    {
+
+        ValidateString(propertyName: nameof(element.Name), value: element.Name);
+        ValidateString(propertyName: nameof(element.Name), value: element.DimensionId);
+
+
+    }
+
+    public static void Validate(Mapper.State state)
+    {
+        ValidateName(propertyName: nameof(state.Name), value: state.Name);
+       
+    }
+
+    public static void Validate(Mapper.Window window)
+    {
+        ValidateName(propertyName:nameof(window.Title), value: window.Title);
+
+        foreach (var id in window.ElementIds)
+        {
+            ValidateGuid(propertyName: "ElementId", value: id);
+
+        }
     }
 }
 

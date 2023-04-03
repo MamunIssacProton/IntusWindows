@@ -9,9 +9,9 @@ public interface IDimensionService:IBaseService
 
     public ValueTask<ApiResultDTO> SaveDimensionAsync(Dimension dimension);
 
-    public ValueTask<DimensionDTO?> GetDimensionByIdAsync(string id);
+   // public ValueTask<DimensionDTO?> GetDimensionByIdAsync(string id);
 
-    public ValueTask<ApiResultDTO> UpdateDimensionAsync(string id, decimal height, decimal width, string title);
+    public ValueTask<ApiResultDTO> UpdateDimensionAsync(UpdateDimension dimension);
 
 }
 
