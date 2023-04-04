@@ -4,16 +4,16 @@ namespace IntusWindows.Sales.Order.Web.Services.Services;
 
 public  class BaseService : IBaseService
 {
-   public readonly HttpClient client;
+    public readonly ProgressiveHttpClient client;
 
-    public BaseService(HttpClient client)
+    public BaseService(ProgressiveHttpClient client)
     {
         this.client = client;
         this.client.BaseAddress = new Uri(ApiEndpoints.Order);
-
+        
     }
     
-
+    
 
 
 }

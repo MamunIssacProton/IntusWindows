@@ -11,8 +11,7 @@ public static class DIExtensions
 {
     public static IServiceCollection AddHttpClients(this IServiceCollection services)
     {
-
-        services.AddHttpClient<IDimensionService,DimensionService>();
+        services.AddTransient<IDimensionService,DimensionService>();
         services.AddHttpClient<IElementService,ElementService> ();
         services.AddHttpClient<IOrderService, OrderService>();
         services.AddHttpClient<IWindowService, WindowService>();
@@ -22,7 +21,13 @@ public static class DIExtensions
 
     public static IServiceCollection AddHttpProgressBarService(this IServiceCollection services)
     {
-       return services.AddScoped<IProgress<int>, Progress<int>>();
+       
+       services.AddScoped<IProgress<long>, Progress<long>>();
+        services.AddScoped<ProgressiveHttpClient>();
+
+        services.AddHttpClient<IBaseService, BaseService>()
+               .SetHandlerLifetime(TimeSpan.FromMinutes(3));
+        return services;
     }
    
 }

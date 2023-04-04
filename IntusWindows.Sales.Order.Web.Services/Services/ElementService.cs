@@ -8,7 +8,7 @@ namespace IntusWindows.Sales.Order.Web.Services.Services;
 
 public class ElementService : BaseService, IElementService
 {
-    public ElementService(HttpClient client) : base(client)
+    public ElementService(ProgressiveHttpClient client) : base(client)
     {
     }
 
