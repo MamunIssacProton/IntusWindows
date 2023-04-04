@@ -13,6 +13,6 @@ public interface IDimensionService:IBaseService
 
     public ValueTask<ApiResultDTO> UpdateDimensionAsync(UpdateDimension dimension);
 
-    public event Action<int> ProgressChanged; 
+   
 }
 

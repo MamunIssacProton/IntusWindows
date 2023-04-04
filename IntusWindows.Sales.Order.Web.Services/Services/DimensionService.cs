@@ -14,31 +14,10 @@ public  class DimensionService:BaseService,IDimensionService
     {
     }
 
-    public event Action<int> ProgressChanged;
 
     public async ValueTask<IReadOnlyList<DimensionDTO>> GetAllDimensionsListAsync()
     {
-        //var response = await client.GetAsync("/api/Dimension/list",HttpCompletionOption.ResponseContentRead);
-
-        //var contentLength = response.Content.Headers.ContentLength;
-        //var buffer = new byte[4096];
-        //var stream = await response.Content.ReadAsStreamAsync();
-        //var bytesRead = 0;
-        //var totalBytesRead = 0;
-
-        //while ((bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
-        //{
-        //    totalBytesRead += bytesRead;
-        //    if (contentLength.HasValue && progress != null)
-        //    {
-        //        var percentage = (int)Math.Round((double)totalBytesRead / contentLength.Value * 100);
-        //        progress.Report(percentage);
-        //        ProgressChanged.Invoke(percentage);
-
-        //    }
-        //}
-
-        var response = await client.GetWithProgressAsync("/api/Dimension/list");
+       var response = await client.GetWithProgressAsync("/api/Dimension/list");
        return JsonConvert.DeserializeObject<IReadOnlyList<DimensionDTO>>(await response.Content.ReadAsStringAsync());
     }
 

@@ -1,20 +1,23 @@
-﻿using System;
+﻿using IntusWindows.Sales.Order.Web.Services.Interfaces;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Net.Http.Json;
+
 namespace IntusWindows.Sales.Order.Web.Services.Services;
 
 public  class ProgressiveHttpClient:HttpClient
 {
-    readonly IProgress<long> progress;
-
-    public ProgressiveHttpClient(IProgress<long> progress)
+    readonly ProgressService progressService;
+    public ProgressiveHttpClient( ProgressService progressService)
     {
-        this.progress = progress;
+      
         this.BaseAddress = new Uri(ApiEndpoints.Order);
-
+       this.progressService = progressService;
     }
-
+ 
     public  async Task<HttpResponseMessage> GetWithProgressAsync(string requestUri)
     {
-        var response = await GetAsync(requestUri, HttpCompletionOption.ResponseHeadersRead);
+        var response = await GetAsync(requestUri, HttpCompletionOption.ResponseContentRead);
         if (response.IsSuccessStatusCode)
         {
             var contentLength = response.Content.Headers.ContentLength;
@@ -28,16 +31,14 @@ public  class ProgressiveHttpClient:HttpClient
                 while ((bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
                 {
                     totalRead += bytesRead;
-                    this.progress?.Report(totalRead * 100 / totalBytes);
+                    var progress = totalRead * 100 / totalBytes;
+                    progressService.Report(progress);
+                  
                 }
             }
         }
         return response;
     }
 
-
-  
-
-  
 }
 
