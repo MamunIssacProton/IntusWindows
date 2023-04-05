@@ -16,7 +16,7 @@ public class StateController:ControllerBase
 		this.applicationService = applicationService;
 	}
 	[HttpGet("list")]
-	public async ValueTask<IReadOnlyList<State>> GetStatesAsync() => await this.applicationService.GetAllStateListAsync();
+	public async ValueTask<IReadOnlyList<StateDTO>> GetStatesAsync() => await this.applicationService.GetAllStateListAsync();
 
 	[HttpPost("create")]
 	public async ValueTask<ApiResultDTO> Create(CreateStateCommand command)

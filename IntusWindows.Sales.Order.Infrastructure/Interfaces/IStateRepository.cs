@@ -7,7 +7,7 @@ public interface IStateRepository: IBaseContextRepository
 {
 	ValueTask<ApiResultDTO> CreateNewStateAsync(State state);
 
-	ValueTask<IReadOnlyList<State>> GetAllStatesListAsync();
+	ValueTask<IReadOnlyList<StateDTO>> GetAllStatesListAsync();
 
 	ValueTask<State> GetStateByIdAsync(Guid id);
 

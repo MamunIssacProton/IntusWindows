@@ -53,7 +53,8 @@
     [Parameter]
     public bool HasDimensions { get; set; } = false;
 
-    string SkipProperty { get; set; } = string.Empty;
+    [Parameter]
+    public string SkipProperty { get; set; } = string.Empty;
 
     public FormBase()
     {
@@ -81,6 +82,9 @@
             {
                 switch (property.PropertyType)
                 {
+                    case Type guidType when guidType == typeof(Guid):
+
+                        break;
                     case Type decimalType when decimalType == typeof(decimal):
 
                         property.SetValue(Model, decimal.Parse(InputValues[property.Name]));
@@ -92,11 +96,11 @@
 
                         break;
                     case Type enumType when enumType == typeof(ElementType):
-                     
+
                         property.SetValue(Model, Enum.Parse(property.PropertyType, InputValues[property.Name]));
                         break;
                     default:
-                       
+
                         property.SetValue(Model, InputValues[property.Name]);
                         break;
                 }

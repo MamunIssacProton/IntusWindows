@@ -13,11 +13,11 @@ public static class DIExtensions
     {
         services.AddHttpClient<IBaseService, BaseService>()
               .SetHandlerLifetime(TimeSpan.FromMinutes(3));
-        services.AddScoped<IDimensionService,DimensionService>();
-        services.AddScoped<IElementService,ElementService> ();
-        services.AddScoped<IOrderService, OrderService>();
-        services.AddScoped<IWindowService, WindowService>();
-        services.AddScoped<IStateService, StateService>();
+        services.AddTransient<IDimensionService,DimensionService>();
+        services.AddTransient<IElementService,ElementService> ();
+        services.AddTransient<IOrderService, OrderService>();
+        services.AddTransient<IWindowService, WindowService>();
+        services.AddTransient<IStateService, StateService>();
         return services;
     }
 
@@ -26,7 +26,7 @@ public static class DIExtensions
 
         services.AddScoped<IProgress<long>, Progress<long>>();
         services.AddScoped<ProgressService>();
-        services.AddScoped<ProgressiveHttpClient>();
+        services.AddTransient<ProgressiveHttpClient>();
       
         return services;
     }

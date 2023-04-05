@@ -34,11 +34,11 @@ public sealed class StateRepository:BaseContextRepository, IStateRepository
         return new ApiResultDTO(true,$"{state.Name.Value} saved successfully");
     }
 
-    public async ValueTask<IReadOnlyList<State>> GetAllStatesListAsync()
+    public async ValueTask<IReadOnlyList<StateDTO>> GetAllStatesListAsync()
     {
-        var states=  await context.States.ToListAsync();
+        var states=  await context.States.AsNoTracking().Select(x=>new StateDTO(x.Id,x.Name)).ToListAsync();
         if (states is null)
-            return new List<State>().AsReadOnly();
+            throw new NotFoundException("No state has found");
         return states.AsReadOnly();
     }
 

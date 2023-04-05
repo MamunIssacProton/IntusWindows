@@ -1,13 +1,23 @@
 ﻿@page "/state";
 @inject IStateService stateService;
+@using IntusWindows.Sales.Order.Web.Blazor.Components;
 @inject ProgressService progressService;
 
+@implements IDisposable;
 <h3>Sate Management</h3>
 <h5>Progress : @Progress</h5>
+<label>@Messgae</label>
+<button class="btn btn-primary" @onclick="() => dialog.Show()">Create new State</button>
+<DialogBase @ref="dialog" Title="Create new State" IsSave="false">
+    <FormBase T="Mapper.State" OnModelCreate="OnSateCreated" SaveButtonText="Create" SkipProperty="Id"></FormBase>
 
+</DialogBase>
 @code {
-    List<Mapper.State> States = new List<Mapper.State>();
 
+    List<StateDTO> States = new List<StateDTO>();
+    private DialogBase dialog;
+
+    string Messgae { get; set; }
     long Progress;
     protected override async Task OnInitializedAsync()
     {
@@ -18,6 +28,23 @@
     void OnProgressChanged(object sender, long progress)
     {
         this.Progress = progress;
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        progressService.ProgressChanged -= OnProgressChanged;
+
+        Console.WriteLine("unregistering the update");
+
+    }
+
+    public async void OnSateCreated(Mapper.State state)
+    {
+        Messgae = $"{state.Name} has created successfully!";
+        state.Id = Guid.NewGuid();
+        await stateService.CreateState(state);
+        dialog.CloseDialog();
         StateHasChanged();
     }
     }
