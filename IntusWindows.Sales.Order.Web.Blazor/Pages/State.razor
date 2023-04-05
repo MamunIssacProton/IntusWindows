@@ -1,0 +1,24 @@
+﻿@page "/state";
+@inject IStateService stateService;
+@inject ProgressService progressService;
+
+<h3>Sate Management</h3>
+<h5>Progress : @Progress</h5>
+
+@code {
+    List<Mapper.State> States = new List<Mapper.State>();
+
+    long Progress;
+    protected override async Task OnInitializedAsync()
+    {
+        progressService.ProgressChanged += OnProgressChanged;
+        States.Clear();
+        States.AddRange(await stateService.GetStatesAsync());
+    }
+    void OnProgressChanged(object sender, long progress)
+    {
+        this.Progress = progress;
+        StateHasChanged();
+    }
+    }
+

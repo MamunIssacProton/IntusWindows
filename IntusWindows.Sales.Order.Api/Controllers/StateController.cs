@@ -2,6 +2,7 @@
 using IntusWindows.Sales.Order.Api.ApplicationServices;
 using IntusWindows.Sales.Order.Api.Commands.Create;
 using IntusWindows.Sales.Order.Api.Commands.Update;
+using IntusWindows.Sales.Order.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IntusWindows.Sales.Order.Api.Controllers;
@@ -14,6 +15,8 @@ public class StateController:ControllerBase
 	{
 		this.applicationService = applicationService;
 	}
+	[HttpGet("list")]
+	public async ValueTask<IReadOnlyList<State>> GetStatesAsync() => await this.applicationService.GetAllStateListAsync();
 
 	[HttpPost("create")]
 	public async ValueTask<ApiResultDTO> Create(CreateStateCommand command)

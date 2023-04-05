@@ -37,6 +37,8 @@ public sealed class StateRepository:BaseContextRepository, IStateRepository
     public async ValueTask<IReadOnlyList<State>> GetAllStatesListAsync()
     {
         var states=  await context.States.ToListAsync();
+        if (states is null)
+            return new List<State>().AsReadOnly();
         return states.AsReadOnly();
     }
 

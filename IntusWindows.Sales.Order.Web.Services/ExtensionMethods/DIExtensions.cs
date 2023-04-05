@@ -17,7 +17,7 @@ public static class DIExtensions
         services.AddScoped<IElementService,ElementService> ();
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IWindowService, WindowService>();
-       
+        services.AddScoped<IStateService, StateService>();
         return services;
     }
 
