@@ -1,9 +1,8 @@
 ﻿@page "/"
 @using IntusWindows.Sales.Order.Web.Services.Services;
 @inject IDimensionService dimensionService;
-@*@inject Action<long> ProgressUpdateAction*@
-    @inject ProgressService progressService;
-
+@inject ProgressService progressService;
+@implements IDisposable;
 <div>
     <h6>Progress : @progress</h6>
 </div>
@@ -73,13 +72,13 @@
         await dimensionService.GetAllDimensionsListAsync();
 
     }
-    //protected  void Dispose()
-    //{
-    //    ProgressUpdateAction-= UpdateProgress;
+    public void Dispose()
+    {
+        progressService.ProgressChanged -= UpdateProgress;
 
-    //    Console.WriteLine("unregistering the update");
+        Console.WriteLine("unregistering the update");
 
-    //}
+    }
 
 
 }

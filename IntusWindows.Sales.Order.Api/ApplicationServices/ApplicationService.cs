@@ -149,7 +149,10 @@ public class ApplicationService
     public async ValueTask<IReadOnlyList<DimensionDTO>> GetDimensionsAsync()
 
                                                   => await this.dimensionRepository.GetAllDimensionsListAsync();
-                                                    
+
+
+    public async ValueTask<IReadOnlyList<StateDTO>> GetAllStateListAsync()
+                                                 => await this.stateRepository.GetAllStatesListAsync();
 
     public async ValueTask<ApiResultDTO> HandleCommand(UpdateDimensionCommand command)
     {
