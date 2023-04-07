@@ -210,3 +210,63 @@
         transform: translateY(100%);
     }
 }
+
+/* Table style */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Table header style */
+thead th {
+    font-weight: bold;
+    text-align: left;
+    padding: 12px 15px;
+    border-bottom: 2px solid #ccc;
+}
+
+/* Table body style */
+tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+tbody td {
+    padding: 10px 15px;
+    border-bottom: 1px solid #ccc;
+}
+
+/* Context menu container style */
+.context-menu-container {
+/*    position: absolute;
+    z-index: 999;*/
+    display: none;
+    background-color: coral;
+    position: absolute;
+/*    top: 0;
+    left: 0;
+    animation-name: move;
+    animation-duration: 2s;*/
+}
+
+
+/* Context menu list style */
+.context-menu {
+    list-style: none;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    background-color: white;
+    border: 1px solid black;
+    width:5rem;
+    z-index: 999;
+}
+    /* Context menu item style */
+    .context-menu li {
+        padding: 5px 10px;
+        cursor: pointer;
+    }
+
+        /* Context menu item hover style */
+        .context-menu li:hover {
+            background-color: #f2f2f2;
+        }
