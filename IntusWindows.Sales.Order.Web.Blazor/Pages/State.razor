@@ -6,6 +6,7 @@
 @implements IDisposable;
 <h3>Sate Management</h3>
 <h5>Progress : @Progress</h5>
+<DataTableBase T="StateDTO" Data="States"></DataTableBase>
 <label>@Messgae</label>
 <button class="btn btn-primary" @onclick="() => dialog.Show()">Create new State</button>
 <DialogBase @ref="dialog" Title="Create new State" IsSave="false">

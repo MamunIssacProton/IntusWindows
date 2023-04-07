@@ -1,11 +1,14 @@
 ﻿@page "/"
 @using IntusWindows.Sales.Order.Web.Services.Services;
+@using IntusWindows.Sales.Order.Web.Blazor.Components;
 @inject IDimensionService dimensionService;
 @inject ProgressService progressService;
 @implements IDisposable;
 <div>
     <h6>Progress : @progress</h6>
 </div>
+<DataTableBase T="DimensionDTO" Data="Dimensions" Title="Dimensions" ShowContextMenu="false"></DataTableBase>
+
 <div class="dock">
     <ul>
         <li>
@@ -32,6 +35,7 @@
 
     long progress;
 
+    List<DimensionDTO> Dimensions { get; set; } = new List<DimensionDTO>();
     private async Task HighlightImage(string id)
     {
         ElementReference clickedImg = id switch
@@ -69,7 +73,8 @@
     {
         progressService.ProgressChanged += UpdateProgress;
         //service.ProgressUpdated+= UpdateProgress;
-        await dimensionService.GetAllDimensionsListAsync();
+        Dimensions.Clear();
+        Dimensions.AddRange( await dimensionService.GetAllDimensionsListAsync());
 
     }
     public void Dispose()
@@ -81,4 +86,4 @@
     }
 
 
-}
+    }

@@ -1,0 +1,36 @@
+﻿<div class="context-menu-container" style="display: @DisplayStyle; left: @LeftPx; top: @TopPx;">
+<div class="context-menu" >
+    @foreach (var item in ContextMenuItems)
+        {
+           <li class="context-menu-item" @onclick="()=>OnItemClick(item)">@item.Text</li>
+        }
+
+</div>
+</div>
+
+
+
+@code {
+    [Parameter] public string DisplayStyle { get; set; }
+    [Parameter] public string LeftPx { get; set; }
+    [Parameter] public string TopPx { get; set; }
+
+    [Parameter]
+    public List<ContextMenuItem> ContextMenuItems { get; set; } = new List<ContextMenuItem>();
+
+    [Parameter]
+    public EventCallback<ContextMenuItem> OnItemClicked { get; set; }
+
+    [Parameter]
+    public EventCallback OnContextMenuClose { get; set; }
+
+    private void OnItemClick(ContextMenuItem item)
+    {
+        if (OnItemClicked.HasDelegate)
+        {
+            OnItemClicked.InvokeAsync(item);
+            OnContextMenuClose.InvokeAsync();
+        }
+
+    }
+}
