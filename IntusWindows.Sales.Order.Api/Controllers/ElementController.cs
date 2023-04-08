@@ -17,6 +17,9 @@ public class ElementController : ControllerBase
     {
         this.applicationService = applicationService;
     }
+    [HttpGet("list")]
+    public async ValueTask<IReadOnlyList<ElementDTO>> List()
+                                                      =>await this.applicationService.GetAllElementListAsync();
 
     [HttpPost("create")]
 
@@ -24,8 +27,8 @@ public class ElementController : ControllerBase
     {
         try
         {
-            await this.applicationService.HandleCommand(command);
-            return Ok(command.Id);
+          
+            return Ok(await this.applicationService.HandleCommand(command));
         }
         catch (Exception ex)
         {

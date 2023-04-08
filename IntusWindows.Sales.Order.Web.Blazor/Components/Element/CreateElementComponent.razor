@@ -1,0 +1,67 @@
+﻿@inject IDimensionService dimensionService;
+@inject IElementService elementService;
+@implements IDisposable;
+@inject ProgressService progressService;
+<h6>Progress : @Progress</h6>
+<h5>Msg @msg</h5>
+<button class="btn btn-primary" @onclick="() => dialog.Show()">Create New Element</button>
+<DialogBase @ref="dialog" Title="Create new element" OnSave="OnSave" CreateButtonText="Save" IsSave="true">
+
+    <div>
+        <input placeholder="@Element.Name" @bind-value="Element.Name"/>
+
+        <select id="@Element.DimensionId" @bind="@Element.DimensionId">
+             @foreach (var dimension in dimensions)
+            {
+               <option value="@dimension.id"> @dimension.id @dimension.title</option>
+            }
+        </select>
+
+        
+    </div>
+
+
+</DialogBase>
+
+
+
+@code
+
+{
+    private DialogBase dialog;
+    long Progress;
+    string msg;
+
+    List<DimensionDTO> dimensions { get; set; } = new List<DimensionDTO>();
+
+    Mapper.Element Element { get; set; } = new Mapper.Element();
+
+    protected override async Task OnInitializedAsync()
+    {
+        progressService.ProgressChanged += OnProgressChanged;
+        dimensions.Clear();
+        dimensions.AddRange(await dimensionService.GetAllDimensionsListAsync());
+        
+    }
+
+    void OnProgressChanged(object sender, long progress)
+    {
+        this.Progress = progress;
+        StateHasChanged();
+    }
+
+
+    async Task OnSave()
+    {
+        msg = "On Save "+Element.DimensionId;
+        Element.Id = Guid.NewGuid();
+        ValidatorFactory.Validate(Element);
+        Progress = 0;
+        await elementService.CreateElement(Element);
+
+    }
+    public void Dispose() =>
+           progressService.ProgressChanged -= OnProgressChanged;
+
+    }
+

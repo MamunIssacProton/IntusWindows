@@ -6,6 +6,8 @@ namespace IntusWindows.Sales.Order.Web.Services.Interfaces;
 
 public interface IElementService
 {
-    Task<ApiResultDTO> CreateElement(Mapper.Element element);
+    ValueTask<ApiResultDTO> CreateElement(Mapper.Element element);
+
+    ValueTask<IReadOnlyList<ElementDTO>> GetElementsAsync();
 }
 
