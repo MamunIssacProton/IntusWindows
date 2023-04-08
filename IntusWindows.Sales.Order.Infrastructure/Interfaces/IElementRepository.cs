@@ -9,7 +9,7 @@ public interface IElementRepository : IBaseContextRepository
 
     ValueTask<ApiResultDTO> DeleteElementAsync(Guid id);
 
-    ValueTask<IReadOnlyList<Element>> GetElementsListAsync();
+    ValueTask<IReadOnlyList<ElementDTO>> GetElementsListAsync();
 
     ValueTask<Element?> GetElementByIdAsync(Guid id);
 

@@ -21,9 +21,11 @@ public sealed class ElementRepository : BaseContextRepository, IElementRepositor
         throw new NotImplementedException();
     }
 
-    public async ValueTask<IReadOnlyList<Element>> GetElementsListAsync()
+    public async ValueTask<IReadOnlyList<ElementDTO>> GetElementsListAsync()
     {
-        return context.Elements.Include(x => x.dimension).ToList().AsReadOnly();
+        return context.Elements.AsNoTracking().Include(x => x.dimension).Select(x=>new ElementDTO(x.Id,x.elementName,x.dimension.Width,x.dimension.Height))
+                                                         .ToList()
+                                                         .AsReadOnly();
     }
 
     public async ValueTask<ApiResultDTO> SaveElementAsync(Element element, string dimensionId)

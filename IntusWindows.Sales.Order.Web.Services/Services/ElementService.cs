@@ -12,12 +12,20 @@ public class ElementService : BaseService, IElementService
     {
     }
 
-    public async Task<ApiResultDTO> CreateElement(Mapper.Element element)
+    public async ValueTask<ApiResultDTO> CreateElement(Mapper.Element element)
     {
 
         var response = await client.PostAsJsonAsync<Mapper.Element>("api/Element/Create", element);
 
         return JsonConvert.DeserializeObject<ApiResultDTO>(await response.Content.ReadAsStringAsync());
-    }   
+    }
+
+    public async ValueTask<IReadOnlyList<ElementDTO>> GetElementsAsync()
+    {
+        var response = await client.GetWithProgressAsync("/api/Element/list");
+        if (response.IsSuccessStatusCode)
+            return JsonConvert.DeserializeObject<IReadOnlyList<ElementDTO>>(await response.Content.ReadAsStringAsync());
+        return new List<ElementDTO>().AsReadOnly();
+    }
 }
 

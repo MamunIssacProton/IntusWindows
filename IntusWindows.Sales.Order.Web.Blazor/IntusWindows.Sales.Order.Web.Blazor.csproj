@@ -30,6 +30,7 @@
     <None Remove="Components\" />
     <None Remove="Components\Dimension\" />
     <None Remove="ExtensionMethods\" />
+    <None Remove="Components\Element\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Components\" />
@@ -37,6 +38,7 @@
     <Folder Include="wwwroot\icons\" />
     <Folder Include="ExtensionMethods\" />
     <Folder Include="wwwroot\js\" />
+    <Folder Include="Components\Element\" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="wwwroot\icons\" />

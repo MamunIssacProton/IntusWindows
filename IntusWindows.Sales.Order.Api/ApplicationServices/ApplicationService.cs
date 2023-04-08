@@ -35,7 +35,7 @@ public class ApplicationService
 
     }
 
-    public async ValueTask HandleCommand(CreateElementCommand command)
+    public async ValueTask<ApiResultDTO> HandleCommand(CreateElementCommand command)
     {
         var dimension = await dimensionRepository.GetDimensionByIdAsync(command.DimensionId);
         if (dimension == null)
@@ -48,7 +48,7 @@ public class ApplicationService
         element.SetElementName(elementType, ElementName.Create(command.Name));
         element.SetElementType(elementType);
 
-        await elementRepository.SaveElementAsync(element, command.DimensionId);
+       return await elementRepository.SaveElementAsync(element, command.DimensionId);
 
 
     }
@@ -154,6 +154,8 @@ public class ApplicationService
     public async ValueTask<IReadOnlyList<StateDTO>> GetAllStateListAsync()
                                                  => await this.stateRepository.GetAllStatesListAsync();
 
+    public async ValueTask<IReadOnlyList<ElementDTO>> GetAllElementListAsync()
+                                                => await this.elementRepository.GetElementsListAsync();
     public async ValueTask<ApiResultDTO> HandleCommand(UpdateDimensionCommand command)
     {
         return await this.dimensionRepository

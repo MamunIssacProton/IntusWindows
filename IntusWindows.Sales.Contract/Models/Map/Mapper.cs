@@ -41,9 +41,9 @@ public static class Mapper
 	{
 		public Guid Id { get; set; }
 
-		public required string Name { get; set; }
+		public  string? Name { get; set; }
 
-		public required string DimensionId { get; set; }
+		public  string? DimensionId { get; set; }
 
 	}
 
