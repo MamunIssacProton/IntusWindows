@@ -16,7 +16,7 @@ public sealed class StateRepository:BaseContextRepository, IStateRepository
 
     public async ValueTask<ApiResultDTO> ChangeStateNameAsync(State state)
     {
-        var result = await context.States.Where(x => x.Id == state.Id).FirstOrDefaultAsync();
+        var result = await context.States.SingleOrDefaultAsync(x=>x.Id==state.Id);
         if (result is null)
             throw new NotFoundException($"no state has found with id : {state.Id}");
 
@@ -44,7 +44,7 @@ public sealed class StateRepository:BaseContextRepository, IStateRepository
 
     public async ValueTask<State> GetStateByIdAsync(Guid id)
     {
-       var state= await context.States.Where(x => x.Id == id).FirstOrDefaultAsync();
+       var state= await context.States.SingleOrDefaultAsync(x=>x.Id==id);
         if (state is null)
             throw new NotFoundException($"no state has found with id : {id}");
         return state;

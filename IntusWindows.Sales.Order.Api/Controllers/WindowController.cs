@@ -31,6 +31,6 @@ public class WindowController : ControllerBase
     }
 
     [HttpGet("list")]
-    public async ValueTask<IReadOnlyList<Window>> GetWindowsAsync() => await this.applicationService.GetAllWindowQuery();
+    public async ValueTask<IReadOnlyList<WindowDTO>> GetWindowsAsync() => await this.applicationService.GetAllWindowQuery();
 }
 

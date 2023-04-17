@@ -1,0 +1,145 @@
+﻿@page "/order"
+@using IntusWindows.Sales.Order.Web.Blazor.Components;
+@inject ProgressService progressService;
+@implements IDisposable;
+@inject IOrderService orderSerive;
+@inject IWindowService windowsService;
+@inject IStateService stateService;
+
+
+<button class="btn btn-primary" @onclick="()=>dialog.Show()">Generate new Order</button>
+<label>@Message</label>
+<DialogBase @ref="dialog" Title="Generate Order" OnSave="OnOrderCreate" IsSave="EnableSave">
+    <div>
+
+        <input placeholder="Order Name" @bind="order.OrderName" />
+
+        <select @bind="@order.StateId">
+            <option value="">Select Sate</option>
+            @foreach (var state in states)
+            {
+                <option value="@state.Id">@state.Name</option>
+            }
+        </select>
+        <label>Select windows</label>
+
+        @foreach (var window in windows)
+        {
+            <label>
+                <input type="checkbox" checked="@selectedWindows.Contains(window)" @onclick="()=>ToggleWindowSelection(window)" />
+                @window.windowName
+            </label>
+        }
+
+    </div>
+</DialogBase>
+<DataTableBase Title="Orders" T="OrderDTO" Data="orders" OnItemSelected="(e)=>onSelectedOrder(e as OrderDTO)" OnContextMenuSelected="(e)=>SelectedContextMenu(e as ContextMenuItem)" ShowContextMenu="true" contextMenuItems="contextMenuItems"></DataTableBase>
+
+<DialogBase @ref="dialogOrderDetails" Title="Order Details" CancelButtonText="Ok">
+    @if (selectedOrder != null)
+    {
+        <label>Order Name @selectedOrder.OrderName</label>
+        <ul>
+            <span>State : @selectedOrder.State</span>
+            <span>windows Information</span>
+        </ul>
+
+
+
+        @*<DataTableBase T="WindowDTO" Data="selectedOrder.WindowsIds"></DataTableBase>*@
+        @*@foreach (var window in selectedOrder.windows)
+            {
+                <ul>
+                    <label>Name @window.windowName</label>
+                </ul>
+                <ul>
+                    <label>QuantityOfWindows @window.quantityOfWindows</label>
+                </ul>
+                <ul>
+                    <label>Total Sub elements @window.totalSubElements</label>
+
+                </ul>
+
+                <ul>
+                    <label>Elements</label>
+                    @foreach (var element in window.Elements)
+                    {
+                        <ul>
+
+                            <span>Name : @element.elementName</span>
+                            <ul>
+                                Dimension:
+                                H:  @element.height X W:  @element.width
+                                <button class="btn btn-primary">Change Dimension</button>
+                            </ul>
+                        </ul>
+
+                    }
+                </ul>
+            }*@
+        <WindowTreeViewComponent ShowDetails="true" HasChangeDimension="false" windows="treeNodes"></WindowTreeViewComponent>
+    }
+</DialogBase>
+
+<DialogBase @ref="dialogChangeDimension" Title="Change Dimension From Order" CancelButtonText="Cancel">
+    @if (selectedOrder != null)
+    {
+        <label>Order Name @selectedOrder.OrderName</label>
+
+        <span>State : @selectedOrder.State</span>
+        <span>windows Information</span>
+
+        <WindowTreeViewComponent ShowDetails="true" HasChangeDimension="true" OnDimensionChangeConfirm="async (e) => await OnDimensionChanged(e as List<Mapper.ChangeDimensionFormOrder>)" windows="treeNodes" OnConfirm="async (e) => await OnConfirmElementsDeletion(e as List<ElementNode>)"></WindowTreeViewComponent>
+    }
+</DialogBase>
+
+<DialogBase @ref="dialogChangeState" Title="Change Order State" OnSave="async()=>await OnChangeSateSave()" IsSave="true">
+    @if (selectedOrder != null)
+    {
+        <select @bind="selectedState" title="Select state">
+            @foreach (var state in states)
+            {
+                <option value="@state.Id"> @state.Name</option>
+            }
+        </select>
+    }
+</DialogBase>
+
+
+<DialogBase @ref="dialogChangeOrderName" Title="Change Order Name" OnSave="async()=>await OnChangeOrderName()" IsSave="true">
+    @if (selectedOrder != null)
+    {
+        <span>Order Name : </span>
+        <input @bind-value="ChangedOrderName" />
+    }
+</DialogBase>
+
+<DialogBase @ref="dialogDeleteWindow" Title="Delete window from order" OnSave="async()=>await OnWindowsRemoveFromOrder()" IsSave="EnableSaveChanges" CreateButtonText="Save changes">
+    @if (selectedOrder != null)
+    {
+        selectedWindows = selectedOrder.windows;
+
+        @foreach (var window in selectedWindows)
+        {
+            <label>
+                <input type="checkbox" checked="@selectedWindows.Contains(window)" @onclick="() => ToggleCancelledWindows(window)" />
+                @window.windowName
+            </label>
+        }
+    }
+</DialogBase>
+
+<DialogBase @ref="dialogDeleteElement" Title="Delete Elements from order windows" IsSave="ElementSaveChangeEnabled" OnSave="async () => await OnDeleteElement()">
+    @if (selectedOrder != null)
+    {
+        <WindowTreeViewComponent windows="treeNodes" HasDelete="true" OnConfirm="async(e)=>await OnConfirmElementsDeletion(e as List<ElementNode>)"></WindowTreeViewComponent>
+    }
+</DialogBase>
+
+<DialogBase @ref="dialogDeleteConfirm" OnSave="async()=>await DeleteOrder()" Title="Delete Order" IsSave="true" CreateButtonText="Delete">
+    @if (selectedOrder != null)
+    {
+        <h5>Are you sure to delete @selectedOrder.OrderName?</h5>
+
+    }
+</DialogBase>

@@ -71,8 +71,7 @@ namespace IntusWindows.Sales.Order.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     elementName = table.Column<string>(type: "text", nullable: true),
                     dimensionId = table.Column<string>(type: "text", nullable: true),
-                    elementType = table.Column<int>(type: "integer", nullable: false),
-                    WindowId = table.Column<Guid>(type: "uuid", nullable: true)
+                    elementType = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -81,11 +80,6 @@ namespace IntusWindows.Sales.Order.Infrastructure.Migrations
                         name: "FK_Elements_Dimensions_dimensionId",
                         column: x => x.dimensionId,
                         principalTable: "Dimensions",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Elements_Windows_WindowId",
-                        column: x => x.WindowId,
-                        principalTable: "Windows",
                         principalColumn: "Id");
                 });
 
@@ -113,14 +107,38 @@ namespace IntusWindows.Sales.Order.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "ElementWindow",
+                columns: table => new
+                {
+                    SubElementsId = table.Column<Guid>(type: "uuid", nullable: false),
+                    WindowId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ElementWindow", x => new { x.SubElementsId, x.WindowId });
+                    table.ForeignKey(
+                        name: "FK_ElementWindow_Elements_SubElementsId",
+                        column: x => x.SubElementsId,
+                        principalTable: "Elements",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ElementWindow_Windows_WindowId",
+                        column: x => x.WindowId,
+                        principalTable: "Windows",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Elements_dimensionId",
                 table: "Elements",
                 column: "dimensionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Elements_WindowId",
-                table: "Elements",
+                name: "IX_ElementWindow_WindowId",
+                table: "ElementWindow",
                 column: "WindowId");
 
             migrationBuilder.CreateIndex(
@@ -133,7 +151,7 @@ namespace IntusWindows.Sales.Order.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Elements");
+                name: "ElementWindow");
 
             migrationBuilder.DropTable(
                 name: "OrderWindow");
@@ -142,13 +160,16 @@ namespace IntusWindows.Sales.Order.Infrastructure.Migrations
                 name: "States");
 
             migrationBuilder.DropTable(
-                name: "Dimensions");
+                name: "Elements");
 
             migrationBuilder.DropTable(
                 name: "Orders");
 
             migrationBuilder.DropTable(
                 name: "Windows");
+
+            migrationBuilder.DropTable(
+                name: "Dimensions");
         }
     }
 }

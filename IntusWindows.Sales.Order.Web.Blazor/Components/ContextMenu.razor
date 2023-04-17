@@ -1,19 +1,20 @@
-﻿<div class="context-menu-container" style="display: @DisplayStyle; left: @LeftPx; top: @TopPx;">
-<div class="context-menu" >
+﻿
+<div class="context-menu-container" style="display: @DisplayStyle; left: @LeftPx; top: @TopPx;">
+<div class="context-menu">
     @foreach (var item in ContextMenuItems)
         {
-           <li class="context-menu-item" @onclick="()=>OnItemClick(item)">@item.Text</li>
+           <li class="context-menu-item" @onclick="() => OnItemClick(item)">@item.Text</li>
         }
 
 </div>
 </div>
 
 
-
 @code {
     [Parameter] public string DisplayStyle { get; set; }
     [Parameter] public string LeftPx { get; set; }
     [Parameter] public string TopPx { get; set; }
+    
 
     [Parameter]
     public List<ContextMenuItem> ContextMenuItems { get; set; } = new List<ContextMenuItem>();
@@ -30,6 +31,7 @@
         {
             OnItemClicked.InvokeAsync(item);
             OnContextMenuClose.InvokeAsync();
+           
         }
 
     }

@@ -1,4 +1,5 @@
 ﻿using IntusWindows.Sales.Contract.DTOs;
+using IntusWindows.Sales.Contract.Models.Map;
 using IntusWindows.Sales.Infrastructure.Interfaces;
 using IntusWindows.Sales.Order.Api.Commands;
 using IntusWindows.Sales.Order.Api.Commands.Create;
@@ -71,6 +72,7 @@ public class ApplicationService
         Window window = new Window(WindowId.Create(command.Id));
         window.SetWindowName(WindowName.Create(command.Title));
         window.SetQuantityOfWindows(command.QuantityOfWindows);
+      
         foreach (var item in command.ElementIds)
         {
             var element = await elementRepository.GetElementByIdAsync(item);
@@ -106,7 +108,7 @@ public class ApplicationService
 
         order.AssignStateToOrder(state);
 
-        foreach (var id in command.WindowIds)
+        foreach (var id in command.Windows)
         {
             var window = await this.windowRepository.GetWindowByIdAsync(id);
             if (window is null)
@@ -121,12 +123,15 @@ public class ApplicationService
 
 
 
-    public async ValueTask<ApiResultDTO> HandleCommand(ChangeDimensionFromOrderCommand command)
+    public async ValueTask<ApiResultDTO> HandleCommand(List<Mapper.ChangeDimensionFormOrder> command)
     {
-        return await this.orderRepository.ChangeDimensionFromOrderByIdAsync(command.OrderId,command.WindowId,
-                                                                            command.CurrentDimensionId,command.NewDimensionId);
+        return await this.orderRepository.ChangeDimensionsFromOrderByIdAsync(command);
     }
 
+    public async ValueTask<ApiResultDTO> HandleCommand(ChangeStateInOrderCommand command)
+    {
+        return await this.orderRepository.ChangeStateInOrderByIdAsync(command.OrderId, command.StateId);
+    }
 
     public async ValueTask<ApiResultDTO> HandleCommand(ChangeOrderNameCommand command)
     {
@@ -139,11 +144,11 @@ public class ApplicationService
                                    => await this.elementRepository.GetElementsDTOByIdAsync(query.Id);
 
 
-    public async ValueTask<IReadOnlyList<Window>> GetAllWindowQuery() =>
+    public async ValueTask<IReadOnlyList<WindowDTO>> GetAllWindowQuery() =>
                                              await this.windowRepository.GetAllWindowsListAsync();
 
 
-    public async ValueTask<IReadOnlyList<Ordr>> GetOrdersListAsync() =>
+    public async ValueTask<IReadOnlyList<OrderDTO>> GetOrdersListAsync() =>
                                            await this.orderRepository.GetOrdersListAsync();
 
     public async ValueTask<IReadOnlyList<DimensionDTO>> GetDimensionsAsync()
@@ -174,9 +179,9 @@ public class ApplicationService
     }
 
 
-    public async ValueTask<ApiResultDTO> HandleCommand(DeleteElementFromOrderCommand command)
+    public async ValueTask<ApiResultDTO> HandleCommand(DeleteElementsFromOrderCommand command)
     {
-        return await this.orderRepository.DeleteElementFromOrderAsync(command.Id, command.WindowId, command.ElementId);
+        return await this.orderRepository.DeleteElementsFromOrderAsync(command.OrderId,command.Elements);
     }
 
     public async ValueTask<ApiResultDTO> HandleCommand(DeleteOrderCommand command)
@@ -186,7 +191,7 @@ public class ApplicationService
 
     public async ValueTask<ApiResultDTO> HandleCommand(DeleteWindowFromOrderCommand command)
     {
-        return await this.orderRepository.DeleteWindowFromOrderAsync(command.OrderId, command.WindowId);
+        return await this.orderRepository.DeleteWindowsFromOrderAsync(command.OrderId,command.WindowIds);
     }
 }
 

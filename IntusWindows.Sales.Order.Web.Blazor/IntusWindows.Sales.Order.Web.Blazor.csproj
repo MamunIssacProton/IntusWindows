@@ -4,6 +4,7 @@
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>ca2cd8f3-bc8b-4bd0-952b-b2130fa60f52</UserSecretsId>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'https' ">
@@ -16,6 +17,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.3" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="7.0.5" />
   </ItemGroup>
 
   <ItemGroup>
@@ -31,6 +33,8 @@
     <None Remove="Components\Dimension\" />
     <None Remove="ExtensionMethods\" />
     <None Remove="Components\Element\" />
+    <None Remove="ContextMenuOptions\" />
+    <None Remove="Components\Window\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Components\" />
@@ -39,6 +43,8 @@
     <Folder Include="ExtensionMethods\" />
     <Folder Include="wwwroot\js\" />
     <Folder Include="Components\Element\" />
+    <Folder Include="ContextMenuOptions\" />
+    <Folder Include="Components\Window\" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="wwwroot\icons\" />

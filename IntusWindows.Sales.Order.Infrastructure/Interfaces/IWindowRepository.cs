@@ -6,7 +6,7 @@ public interface IWindowRepository : IBaseContextRepository
 {
     ValueTask<ApiResultDTO> AddWindow(Window window);
 
-    ValueTask<IReadOnlyList<Window>> GetAllWindowsListAsync();
+    ValueTask<IReadOnlyList<WindowDTO>> GetAllWindowsListAsync();
 
     ValueTask<Window> GetWindowByIdAsync(Guid id);
 

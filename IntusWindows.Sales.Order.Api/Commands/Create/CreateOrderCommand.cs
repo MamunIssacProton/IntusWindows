@@ -9,6 +9,6 @@ public class CreateOrderCommand
 
 	public required Guid StateId { get; set; }
 
-	public required List<Guid> WindowIds { get; set; }
+	public required List<Guid> Windows { get; set; }
 }
 
