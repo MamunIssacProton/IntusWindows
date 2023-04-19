@@ -1,0 +1,109 @@
+﻿@using IntusWindows.Sales.Contract.DTOs
+@typeparam T
+<h3 style="align-content:center">@Title</h3>
+<table class="table">
+    <thead>
+        <tr>
+            @foreach (var header in typeof(T).GetProperties().Where(x => x.PropertyType == typeof(string) || x.PropertyType == typeof(decimal)).ToList())
+            {
+                <th>@header.Name</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Data)
+        {
+            <tr>
+                @foreach (var header in typeof(T).GetProperties().Where(x => x.PropertyType == typeof(string) || x.PropertyType == typeof(decimal)).ToList())
+                {
+                    if (ShowContextMenu)
+                    {
+                        <td @attributes="GetStyles()" style="position:relative" @oncontextmenu="@(e=>OnContextMenu<T>(e,item))" @oncontextmenu:preventDefault="true">@(item.GetType().GetProperty(header.Name).GetValue(item, null))</td>
+                        continue;
+                    }
+                    <td @attributes="GetStyles()">@(item.GetType().GetProperty(header.Name).GetValue(item, null))</td>
+
+                }
+
+            </tr>
+        }
+    </tbody>
+</table>
+@if (ShowContextMenu)
+{
+    <ContextMenu DisplayStyle="@ContextMenuDisplayStyle" OnItemClicked="async(e)=>await SelectedOption(e)" OnContextMenuClose="CloseContextMenu" ContextMenuItems="contextMenuItems" LeftPx="@ContextMenuLeftPx" TopPx="@ContextMenuTopPx" />
+
+
+}
+
+@code {
+            [Parameter]
+            public string Title { get; set; }
+            [Parameter]
+            public List<T> Data { get; set; }
+
+            [Parameter]
+            public bool ShowContextMenu { get; set; } = false;
+
+            [Parameter]
+            public EventCallback OnContextMenuSelected { get; set; }
+
+            [Parameter]
+            public EventCallback OnItemSelected{ get; set; }
+
+            [Parameter]
+            public List<ContextMenuItem> contextMenuItems { get; set; } = new List<ContextMenuItem>() { };
+
+            double X, Y = default;
+            string TopPosition { get; set; }
+            string LeftPosition { get; set; }
+
+    private string ContextMenuDisplayStyle { get; set; } = "none";
+        private string ContextMenuLeftPx { get; set; } = "";
+        private string ContextMenuTopPx { get; set; } = "";
+
+        void OnContextMenu<T>(MouseEventArgs e, T item)
+        {
+            ContextMenuDisplayStyle = "block";
+            ContextMenuLeftPx = e.ClientX + "px";
+            ContextMenuTopPx = e.ClientY + "px";
+            ShowContextMenu = true;
+
+            if (item.GetType().IsEquivalentTo(typeof(OrderDTO)))
+            {
+                if (OnItemSelected.HasDelegate)
+                {
+                    OnItemSelected.InvokeAsync(item as OrderDTO);
+                }
+            }
+            // Console.WriteLine($"selected : {ordr.OrderName}");
+        }
+
+
+        private Dictionary<string, object> GetStyles()
+        {
+            var styles = new Dictionary<string, object>();
+            styles.Add("display", ShowContextMenu ? "block" : "none");
+            styles.Add("position", "relative");
+
+            return styles;
+        }
+
+
+        async ValueTask SelectedOption(ContextMenuItem item)
+        {
+            await OnContextMenuSelected.InvokeAsync(item);
+            ///  CloseContextMenu();
+            Console.WriteLine($"selected : {item.Text}");
+
+
+        }
+
+        public void CloseContextMenu()
+        {
+            ContextMenuDisplayStyle = "none";
+            StateHasChanged();
+
+        }
+    }
+

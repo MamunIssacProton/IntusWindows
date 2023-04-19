@@ -1,2 +1,2 @@
-﻿Console.WriteLine("Bismillah");
+﻿//Console.WriteLine("Bismillah");
 
