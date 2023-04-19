@@ -1,0 +1,74 @@
+﻿@page "/window"
+@inject IWindowService windowService
+@inject NavigationManager Navigation
+
+
+<IntusWindows.Sales.Order.Web.Blazor.Hosted.Client.Components.Window.CreateWindowComponent connection="hubConnection">
+
+</IntusWindows.Sales.Order.Web.Blazor.Hosted.Client.Components.Window.CreateWindowComponent>
+<DataTableBase Data="Windows" T="WindowDTO" Title="Available Windows"></DataTableBase>
+
+@code {
+
+    List<WindowDTO> Windows { get; set; } = new List<WindowDTO>();
+    public bool OnCreateWindow { get; set; } = false;
+    private HubConnection? hubConnection;
+    void ToggleCreateWindow()
+    {
+        OnCreateWindow = true;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+       .WithUrl(Navigation.ToAbsoluteUri($"/hub/{HubGroups.Window}"))
+       .Build();
+
+        await hubConnection.StartAsync();
+
+        await hubConnection.InvokeAsync(HubMethods.JoinGroup);
+
+        hubConnection.On<HubOperations, WindowDTO>(HubMethods.ReceiveMessage, (HubOperations operation, WindowDTO window) =>
+        {
+            switch (operation)
+            {
+                case HubOperations.Created:
+                    if (Windows.Contains(window))
+                        return;
+                    Windows.Add(window);
+                    StateHasChanged();
+
+                    break;
+
+                case HubOperations.Deleted:
+
+                    this.Windows.Remove(window);
+                    StateHasChanged();
+                    break;
+
+                case HubOperations.Updated:
+                    var index = this.Windows.FindIndex(x=>x.Id==window.Id);
+                    if (index != -1)
+                    {
+                        this.Windows[index] = window;
+                        StateHasChanged();
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+
+
+        });
+
+        Windows.Clear();
+        Windows.AddRange(await windowService.GetWindowListAsync());
+    }
+    public bool IsConnected =>
+    hubConnection?.State == HubConnectionState.Connected;
+
+
+}
+
+

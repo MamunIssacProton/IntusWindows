@@ -12,9 +12,10 @@ public class BaseHubService:Hub,IHubService
     public BaseHubService(string hubUri)
 	{
         connection = new HubConnectionBuilder()
-                        .WithUrl($"{baseUri}/{hubUri}")
+                        .WithUrl($"/{hubUri}")
                         .WithAutomaticReconnect()
                         .Build();
+        Console.WriteLine($"new connection : {connection.ConnectionId}");
 	}
 
     [HubMethodName("BroadCastToGroup")]
@@ -23,16 +24,24 @@ public class BaseHubService:Hub,IHubService
         await Clients.Group(groupName).SendAsync("RecieveMessage", message);
     }
 
+    public void Connect(string url)
+    {
+       if(connection==null)
+            new BaseHubService(url);
+    }
+
     [HubMethodName("JoinGroup")]
     public async Task JoinGroup(string groupName)
     {
         await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
+        Console.WriteLine($"{Context.ConnectionId} has joined {groupName}");
     }
 
     [HubMethodName(nameof(LeaveGroup))]
     public async Task LeaveGroup(string groupName)
     {
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupName);
+        Console.WriteLine($"{Context.ConnectionId} has left {groupName}");
     }
 
     //[HubMethodName(nameof(SendMessage))]
@@ -41,13 +50,13 @@ public class BaseHubService:Hub,IHubService
     //    await Clients.All.SendAsync("ReceiveMessage", message);
     //}
     [HubMethodName(nameof(SendMessage))]
-    public async Task SendMessage<T>(T message, string hubUrl = "order")
+    public async Task SendMessage<T>(T message, string hubUrl = "/order")
     {
         await Clients.All.SendAsync("RecieveMessage", hubUrl, message);
     }
 
     [HubMethodName(nameof(SubscribeToMessages))]
-    public async Task SubscribeToMessages<T>(Action<T> messageHandler, string hubUrl = "order")
+    public async Task SubscribeToMessages<T>(Action<T> messageHandler, string hubUrl = "/order")
     {
         await connection.StartAsync();
         connection.On<T>("ReceiveMessage", message =>

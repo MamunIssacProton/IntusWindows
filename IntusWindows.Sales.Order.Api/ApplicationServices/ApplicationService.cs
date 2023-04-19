@@ -161,6 +161,9 @@ public class ApplicationService
 
     public async ValueTask<IReadOnlyList<ElementDTO>> GetAllElementListAsync()
                                                 => await this.elementRepository.GetElementsListAsync();
+
+    public async ValueTask<OrderDTO> GetOrderByIdAsync(Guid orderId) => await this.orderRepository.GetOrderByIdAsync(orderId);
+
     public async ValueTask<ApiResultDTO> HandleCommand(UpdateDimensionCommand command)
     {
         return await this.dimensionRepository

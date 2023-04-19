@@ -24,5 +24,8 @@ public interface IOrderRepository: IBaseContextRepository
 	ValueTask<ApiResultDTO> DeleteElementsFromOrderAsync(Guid orderId, List<ElementNode> elements);
 
 	ValueTask<IReadOnlyList<OrderDTO>> GetOrdersListAsync();
+
+	ValueTask<OrderDTO> GetOrderByIdAsync(Guid orderId);
+
 }
 

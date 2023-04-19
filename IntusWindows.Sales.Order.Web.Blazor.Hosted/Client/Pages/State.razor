@@ -1,0 +1,105 @@
+﻿@page "/state";
+@inject IStateService stateService;
+
+@inject ProgressService progressService;
+@inject NavigationManager Navigation
+@implements IDisposable;
+<h5>Progress : @Progress</h5>
+<label>@Messgae</label>
+<button class="btn btn-primary" @onclick="() => dialog.Show()">Create new State</button>
+<DialogBase @ref="dialog" Title="Create new State" IsSave="false">
+    <FormBase T="Mapper.State" OnModelCreate="OnSateCreated" SaveButtonText="Create" SkipProperty="Id"></FormBase>
+
+</DialogBase>
+<DataTableBase T="StateDTO" Data="States"></DataTableBase>
+@code {
+
+    public List<StateDTO> States { get; set; } = new List<StateDTO>();
+    private DialogBase dialog;
+    private HubConnection? hubConnection;
+
+    string Messgae { get; set; }
+    long Progress;
+    protected override async Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+       .WithUrl(Navigation.ToAbsoluteUri($"/hub/{HubGroups.State}"))
+       .Build();
+
+        await hubConnection.StartAsync();
+
+        await hubConnection.InvokeAsync(HubMethods.JoinGroup);
+
+
+        hubConnection.On<HubOperations, StateDTO>(HubMethods.ReceiveMessage, (HubOperations operation, StateDTO state) =>
+        {
+            switch (operation)
+            {
+                case HubOperations.Created:
+                    if (this.States.Contains(state))
+                        return;
+                    this.States.Add(state);
+                    StateHasChanged();
+                    break;
+
+                case HubOperations.Deleted:
+                    if (this.States.Contains(state))
+                    {
+                        States.Remove(state);
+                        StateHasChanged();
+                    }
+                    break;
+
+                case HubOperations.Updated:
+                    var index = this.States.FindIndex(x => x.Id == state.Id);
+                    if (index != -1)
+                    {
+                        this.States[index] = state;
+                        StateHasChanged();
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+        });
+
+        progressService.ProgressChanged += OnProgressChanged;
+        States.Clear();
+        States.AddRange(await stateService.GetStatesAsync());
+    }
+
+
+
+    void OnProgressChanged(object sender, long progress)
+    {
+        this.Progress = progress;
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        progressService.ProgressChanged -= OnProgressChanged;
+
+        Console.WriteLine("unregistering the update");
+
+    }
+
+    public async void OnSateCreated(Mapper.State state)
+    {
+        Messgae = $"{state.Name} has created successfully!";
+        state.Id = Guid.NewGuid();
+        ValidatorFactory.Validate(state);
+        var res = await stateService.CreateState(state);
+        if (res.Ok && hubConnection != null)
+        {
+            await hubConnection.InvokeAsync(HubMethods.BroadcastToGroup, HubOperations.Created, new StateDTO(state.Id, state.Name));
+
+        }
+        dialog.CloseDialog();
+        StateHasChanged();
+    }
+
+
+}
+

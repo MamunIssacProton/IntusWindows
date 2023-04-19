@@ -8,6 +8,7 @@ public interface IOrderService
 {
     ValueTask<ApiResultDTO> GenerateNewOrder(Mapper.Order order);
 
+    ValueTask<OrderDTO> GetOrderByIdAsync(Guid orderId);
 
     ValueTask<ApiResultDTO> ChangeOrderNameByIdAsync(Mapper.ChangeOrderName orderName);
 

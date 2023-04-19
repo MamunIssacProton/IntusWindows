@@ -5,7 +5,7 @@ public interface IHubService
 {
     Task SendMessage<T>(T message, string hubUrl);
     Task SubscribeToMessages<T>(Action<T> messageHandler, string hubUrl);
-
+    void Connect(string url);
     Task JoinGroup(string groupName);
     Task LeaveGroup(string groupName);
     Task BroadCastToGroup<T>(string groupName, T message);

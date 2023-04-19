@@ -1,0 +1,193 @@
+﻿@using IntusWindows.Sales.Order.Web.Services.Interfaces
+@using IntusWindows.Sales.Contract.Models.Map
+@using IntusWindows.Sales.Contract.Models
+@using IntusWindows.Sales.Contract.DTOs
+@inject IDimensionService dimensionService;
+@foreach (var window in windows.Where(x => x.elements.Count > 0))
+{
+
+    <button class="btn-toggle" @onclick="() => window.IsExpanded = !window.IsExpanded">
+        @if (window.elements.Count > 0)
+        {
+            <span class="icon">@(window.IsExpanded ? "▼" : "►")</span>
+        }
+        <span>@window.WindowName</span>
+
+
+    </button>
+    @if (window.elements.Count > 0 && window.IsExpanded)
+    {
+
+        @if (ShowDetails)
+        {
+            @foreach (var node in window.elements)
+            {
+
+
+                <button class="btn-toggle" style="margin-left:20px;" @onclick="() =>node.IsExpanded=!node.IsExpanded">
+                    @if (window.elements.Count > 0)
+                    {
+                        <span class="icon">@(node.IsExpanded ? "▼" : "►")</span>
+                    }
+                    <span>@node.ElementName</span>
+                </button>
+                @if (node.IsExpanded)
+                {
+                    @if (HasChangeDimension)
+                    {
+                        <label style="margin-left:5rem;">Change Dimension</label>
+                        @if (node.DimensionId.StartsWith("Window"))
+                        {
+                            <select @onchange="(e) => SelectDimension(new Mapper.ChangeDimensionFormOrder() { WindowId = window.WindowId, CurrentDimensionId = node.DimensionId, NewDimensionId = e.Value.ToString() })">
+                                @foreach (var dimension in dimensions.Where(x => x.id.Contains("Window") && x.id != node.DimensionId))
+                                {
+                                    <option value="">Select Dimension</option>
+                                    <option value="@dimension.id"> @dimension.id</option>
+
+                                }
+                            </select>
+                        }
+                        else
+                        {
+
+                            <select>
+                                @foreach (var dimension in dimensions.Where(x => x.id.Contains("Doors") && x.id != node.DimensionId))
+                                {
+                                    <option value="">Select Dimension</option>
+                                    <option value="@dimension.id"> @dimension.id</option>
+
+                                }
+                            </select>
+                        }
+                    }
+                    else
+                    {
+                        <label style="margin-left:5rem">Dimension @node.DimensionId</label>
+                    }
+                }
+            }
+        }
+        else
+        {
+            <ul>
+                @foreach (var element in window.elements)
+                {
+
+                    <ul>
+                        <label>
+                            <input type="checkbox" checked="@CheckedElements.Where(x => x.WindowId == window.WindowId && x.ElementId == element.ElementId).Any()" @onclick="() => ToggleCheckedElements(window.WindowId, element.ElementId)">
+                            @element.ElementName
+
+                        </label>
+                    </ul>
+
+                }
+            </ul>
+        }
+    }
+
+
+}
+@if (HasChangeDimension)
+{
+    <button class="btn btn-primary" @onclick="async () => await ConfirmDimensionChange()">Save Changes</button>
+}
+@if (HasDelete)
+{
+    <button class="btn btn-primary" @onclick="async () => await ConfirmDeleteElementsAsync()">Confirm</button>
+}
+
+@code {
+
+    [Parameter]
+    public List<WindowTreeNode> windows { get; set; } = new List<WindowTreeNode>();
+
+    [Parameter]
+    public EventCallback OnConfirm { get; set; }
+
+    [Parameter]
+    public EventCallback OnDimensionChangeConfirm { get; set; }
+
+    [Parameter]
+    public bool HasChangeDimension { get; set; } = false;
+
+    [Parameter]
+    public bool ShowDetails { get; set; } = false;
+
+    [Parameter]
+    public bool HasDelete { get; set; } = false;
+
+    List<ElementNode> CheckedElements { get; set; } = new List<ElementNode>();
+
+    List<DimensionDTO> dimensions { get; set; } = new List<DimensionDTO>();
+
+    List<Mapper.ChangeDimensionFormOrder> dimensionsToModify { get; set; } = new List<Mapper.ChangeDimensionFormOrder>();
+
+    void SelectDimension(Mapper.ChangeDimensionFormOrder dimension)
+    {
+
+        if (string.IsNullOrEmpty(dimension.NewDimensionId))
+        {
+
+            return;
+        }
+        if (dimensionsToModify.Where(x => x.WindowId == dimension.WindowId && x.CurrentDimensionId == dimension.CurrentDimensionId && x.NewDimensionId == dimension.NewDimensionId).Any())
+        {
+            dimensionsToModify.Remove(dimension);
+
+            return;
+        }
+        else
+        {
+            dimensionsToModify.Add(dimension);
+
+
+        }
+    }
+    void ToggleCheckedElements(Guid windowId, Guid elementId)
+    {
+        var data = new ElementNode(windowId, elementId);
+        {
+
+            if (CheckedElements.Contains(data))
+            {
+                CheckedElements.Remove(data);
+
+                return;
+            }
+
+            CheckedElements.Add(data);
+
+        }
+
+    }
+
+    async Task ConfirmDeleteElementsAsync()
+    {
+        await OnConfirm.InvokeAsync(CheckedElements);
+    }
+
+    async Task ConfirmDimensionChange()
+    {
+        await OnDimensionChangeConfirm.InvokeAsync(dimensionsToModify);
+    }
+
+    async Task RenderExpandableElements()
+    {
+        if (HasChangeDimension)
+        {
+
+            dimensions.Clear();
+            dimensions.AddRange(await dimensionService.GetAllDimensionsListAsync());
+
+        }
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        await RenderExpandableElements();
+        StateHasChanged();
+    }
+}

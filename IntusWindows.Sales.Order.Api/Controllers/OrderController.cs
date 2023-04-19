@@ -19,6 +19,11 @@ public class OrderController : ControllerBase
         this.applicationService = service;
     }
 
+    [HttpGet("{id}")]
+    public async ValueTask<OrderDTO> GetOrderbyIdAsync(Guid id) => await this.applicationService.GetOrderByIdAsync(id);
+
+
+
     [HttpGet("list")]
     public async ValueTask<IReadOnlyList<OrderDTO>> GetOrderListAsync()
                                                          => await this.applicationService.GetOrdersListAsync();

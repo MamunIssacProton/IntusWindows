@@ -1,0 +1,45 @@
+﻿@using IntusWindows.Sales.Order.Web.Services.Interfaces
+@using IntusWindows.Sales.Contract.Models.Map
+@using IntusWindows.Sales.Contract.Utils
+@inject IDimensionService dimensionService
+
+<button class="btn btn-primary" @onclick="() => dialog.Show()">Create new Dimension</button>
+<DialogBase @ref="dialog" Title="Create new Dimension">
+    <FormBase T="Mapper.Dimension" HasDimensions="true" OnModelCreate="OnDimensionCreated" SaveButtonText="Create Dimension"></FormBase>
+</DialogBase>
+<label>@message</label>
+
+
+@code {
+    private DialogBase dialog;
+        string message;
+        [Parameter]
+        public HubConnection? hubConnection { get; set; }
+
+        async Task OnDimensionCreated(Mapper.Dimension dimension)
+        {
+
+            ValidatorFactory.Validate(dimension);
+
+            var response = await dimensionService.SaveDimensionAsync(new Mapper.Dimension(){
+                Title= dimension.Title,
+                Height= dimension.Height,
+                Width= dimension.Width,
+                ElementType= dimension.ElementType });
+
+            var res = await dimensionService.SaveDimensionAsync(dimension);
+            if (res.Ok && hubConnection != null)
+            {
+                await hubConnection.InvokeAsync(HubMethods.BroadcastToGroup, HubOperations.Created,
+                                                new DimensionDTO($"{dimension.ElementType.ToString()}-{dimension.Width} X {dimension.Height}",
+                                                dimension.Width, dimension.Height, dimension.Title));
+                dialog.CloseDialog();
+            }
+
+           
+          
+        }
+
+
+    }
+

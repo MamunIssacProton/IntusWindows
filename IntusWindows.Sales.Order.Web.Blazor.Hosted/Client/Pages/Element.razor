@@ -1,0 +1,81 @@
+﻿@page "/element"
+@inject IElementService elementService;
+@implements IDisposable;
+@inject ProgressService progressService;
+@inject NavigationManager Navigation
+
+
+<IntusWindows.Sales.Order.Web.Blazor.Hosted.Client.Components.Element.CreateElementComponent hubConnection="hubConnection">
+
+</IntusWindows.Sales.Order.Web.Blazor.Hosted.Client.Components.Element.CreateElementComponent>
+<IntusWindows.Sales.Order.Web.Blazor.Hosted.Client.Components.DataTableBase T="ElementDTO" Data="Elements" Title="Available Elements">
+
+</IntusWindows.Sales.Order.Web.Blazor.Hosted.Client.Components.DataTableBase>
+
+@code {
+
+    List<ElementDTO> Elements { get; set; } = new List<ElementDTO>();
+    long Progress;
+
+    private HubConnection? hubConnection;
+    protected override async Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+        .WithUrl(Navigation.ToAbsoluteUri($"/hub/{HubGroups.Element}"))
+        .Build();
+
+        await hubConnection.StartAsync();
+
+        await hubConnection.InvokeAsync(HubMethods.JoinGroup);
+        hubConnection.On<HubOperations, ElementDTO>(HubMethods.ReceiveMessage, (HubOperations operation, ElementDTO element) =>
+        {
+            switch (operation)
+            {
+                case HubOperations.Created:
+                    if (this.Elements.Contains(element))
+                        return;
+                    this.Elements.Add(element);
+                    StateHasChanged();
+                    break;
+
+                case HubOperations.Deleted:
+                    if (this.Elements.Contains(element))
+                    {
+                        Elements.Remove(element);
+                        StateHasChanged();
+                    }
+                    break;
+
+                case HubOperations.Updated:
+                    var index = this.Elements.FindIndex(x => x.Id == element.Id);
+                    if (index != -1)
+                    {
+                        this.Elements[index] = element;
+                        StateHasChanged();
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+        });
+
+
+
+        progressService.ProgressChanged += OnProgressChanged;
+        Elements.Clear();
+        Elements.AddRange(await elementService.GetElementsAsync());
+
+    }
+
+    void OnProgressChanged(object sender, long progress)
+    {
+        this.Progress = progress;
+        StateHasChanged();
+    }
+
+    public void Dispose() =>
+          progressService.ProgressChanged -= OnProgressChanged;
+
+}
+

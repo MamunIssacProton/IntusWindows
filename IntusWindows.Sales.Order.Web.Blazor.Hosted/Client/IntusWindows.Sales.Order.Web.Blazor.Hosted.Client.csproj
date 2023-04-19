@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'https' ">
+    <ExternalConsole>true</ExternalConsole>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' ">
+    <ExternalConsole>true</ExternalConsole>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.4" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.0-preview.3.23177.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Components\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\IntusWindows.Sales.Contract\IntusWindows.Sales.Contract.csproj" />
+    <ProjectReference Include="..\..\IntusWindows.Sales.Order.Web.Services\IntusWindows.Sales.Order.Web.Services.csproj" />
+    <ProjectReference Include="..\Shared\IntusWindows.Sales.Order.Web.Blazor.Hosted.Shared.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Components\DialogBase.razor" />
+  </ItemGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="Components\ContextMenu.razor" />
+    <AdditionalFiles Include="Components\DataTableBase.razor" />
+    <AdditionalFiles Include="Components\DialogBase.razor" />
+    <AdditionalFiles Include="Components\Dimension\CreateDimensionComponent.razor" />
+    <AdditionalFiles Include="Components\Element\CreateElementComponent.razor" />
+    <AdditionalFiles Include="Components\FormBase.razor" />
+    <AdditionalFiles Include="Components\Window\CreateWindowComponent.razor" />
+  </ItemGroup>
+</Project>
