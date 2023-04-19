@@ -17,7 +17,7 @@ public class WindowCfg : IEntityTypeConfiguration<Window>
                 .HasMaxLength(20);
 
 
-        builder.HasMany<Element>(x => x.SubElements);
+        builder.HasMany<Element>(x => x.SubElements).WithMany();
 
         builder.Property(x => x.TotalSubElements).HasColumnName("totalSubElements").HasMaxLength(4);
 

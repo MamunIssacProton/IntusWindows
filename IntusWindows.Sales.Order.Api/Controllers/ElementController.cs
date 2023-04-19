@@ -37,7 +37,7 @@ public class ElementController : ControllerBase
     }
 
 
-    [HttpGet("elementById")]
+    [HttpGet("elementById/{Id}/{WindowId}/{ElementId}")]
     public async ValueTask<ElementDTO?> GetElementByIdAsync(GetElementQuery query)
                                    => await this.applicationService.HandleQuery(query);
 

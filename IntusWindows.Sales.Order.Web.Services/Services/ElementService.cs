@@ -27,5 +27,11 @@ public class ElementService : BaseService, IElementService
             return JsonConvert.DeserializeObject<IReadOnlyList<ElementDTO>>(await response.Content.ReadAsStringAsync());
         return new List<ElementDTO>().AsReadOnly();
     }
+
+    //public async ValueTask<IReadOnlyList<ElementDTO>> GetElementById(Mapper.DeleteElementFromOrdr ordr)
+    //{
+
+    //}
+
 }
 

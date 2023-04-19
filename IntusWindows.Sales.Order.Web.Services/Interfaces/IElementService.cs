@@ -9,5 +9,7 @@ public interface IElementService
     ValueTask<ApiResultDTO> CreateElement(Mapper.Element element);
 
     ValueTask<IReadOnlyList<ElementDTO>> GetElementsAsync();
+
+   // ValueTask<IReadOnlyList>
 }
 

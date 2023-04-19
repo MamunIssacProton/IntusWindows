@@ -23,9 +23,11 @@ public sealed class ElementRepository : BaseContextRepository, IElementRepositor
 
     public async ValueTask<IReadOnlyList<ElementDTO>> GetElementsListAsync()
     {
-        return context.Elements.AsNoTracking().Include(x => x.dimension).Select(x=>new ElementDTO(x.Id,x.elementName,x.dimension.Width,x.dimension.Height))
-                                                         .ToList()
-                                                         .AsReadOnly();
+        return context.Elements.AsNoTracking()
+                               .Include(x => x.dimension)
+                               .Select(x=> new ElementDTO(x.Id,x.elementName,x.dimension.Width,x.dimension.Height,x.dimension.Id))
+                               .ToList()
+                               .AsReadOnly();
     }
 
     public async ValueTask<ApiResultDTO> SaveElementAsync(Element element, string dimensionId)
@@ -36,7 +38,7 @@ public sealed class ElementRepository : BaseContextRepository, IElementRepositor
     }
     public async ValueTask<Element?> GetElementByIdAsync(Guid id)
     {
-        var data = context.Elements.Include(x => x.dimension).Where(x => x.Id == id).FirstOrDefault();
+        var data = await context.Elements.AsNoTracking().Include(x => x.dimension).FirstOrDefaultAsync(x=>x.Id==id);
         //Console.WriteLine($"got data : {data.Id}");
         if (data != null)
             return data;
@@ -46,16 +48,21 @@ public sealed class ElementRepository : BaseContextRepository, IElementRepositor
 
     public async ValueTask<ElementDTO?> GetElementsDTOByIdAsync(Guid id)
     {
-        var data = context.Elements.AsNoTracking().Where(x => x.Id == id).Include(x => x.dimension).Select(x => new
-        {
-            id = Guid.Empty,
-            name = x.elementName,
-            width = x.dimension.Width,
-            height = x.dimension.Height
-        }).FirstOrDefault();
+        var data = await context.Elements.AsNoTracking()
+                                         .Where(x => x.Id == id)
+                                         .Include(x => x.dimension)
+                                         .Select(x => new
+                                         {
+                                             id = Guid.Empty,
+                                             name = x.elementName,
+                                             width = x.dimension.Width,
+                                             height = x.dimension.Height,
+                                             dimensionId=x.dimension.Id
+                                         }).FirstOrDefaultAsync();
+                                         
         //Console.WriteLine($"got data : {data.Id}");
         if (data != null)
-            return new ElementDTO(data.id, data.name, data.width, data.height);
+            return new ElementDTO(data.id, data.name, data.width, data.height,data.dimensionId);
 
         return null;
 

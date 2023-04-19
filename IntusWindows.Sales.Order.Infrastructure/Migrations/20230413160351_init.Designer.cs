@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace IntusWindows.Sales.Order.Infrastructure.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20230403194005_init")]
+    [Migration("20230413160351_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -24,6 +24,21 @@ namespace IntusWindows.Sales.Order.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("ElementWindow", b =>
+                {
+                    b.Property<Guid>("SubElementsId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("WindowId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("SubElementsId", "WindowId");
+
+                    b.HasIndex("WindowId");
+
+                    b.ToTable("ElementWindow");
+                });
 
             modelBuilder.Entity("IntusWindows.Sales.Order.Domain.Entities.Dimension", b =>
                 {
@@ -46,9 +61,6 @@ namespace IntusWindows.Sales.Order.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("WindowId")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("dimensionId")
                         .HasColumnType("text");
 
@@ -60,8 +72,6 @@ namespace IntusWindows.Sales.Order.Infrastructure.Migrations
                         .HasColumnName("elementType");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("WindowId");
 
                     b.HasIndex("dimensionId");
 
@@ -134,6 +144,21 @@ namespace IntusWindows.Sales.Order.Infrastructure.Migrations
                     b.ToTable("OrderWindow");
                 });
 
+            modelBuilder.Entity("ElementWindow", b =>
+                {
+                    b.HasOne("IntusWindows.Sales.Order.Domain.Entities.Element", null)
+                        .WithMany()
+                        .HasForeignKey("SubElementsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("IntusWindows.Sales.Order.Domain.Entities.Window", null)
+                        .WithMany()
+                        .HasForeignKey("WindowId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("IntusWindows.Sales.Order.Domain.Entities.Dimension", b =>
                 {
                     b.OwnsOne("IntusWindows.Sales.Order.Domain.ValueObjects.Height", "Height", b1 =>
@@ -179,10 +204,6 @@ namespace IntusWindows.Sales.Order.Infrastructure.Migrations
 
             modelBuilder.Entity("IntusWindows.Sales.Order.Domain.Entities.Element", b =>
                 {
-                    b.HasOne("IntusWindows.Sales.Order.Domain.Entities.Window", null)
-                        .WithMany("SubElements")
-                        .HasForeignKey("WindowId");
-
                     b.HasOne("IntusWindows.Sales.Order.Domain.Entities.Dimension", "dimension")
                         .WithMany()
                         .HasForeignKey("dimensionId");
@@ -247,11 +268,6 @@ namespace IntusWindows.Sales.Order.Infrastructure.Migrations
                         .HasForeignKey("WindowsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("IntusWindows.Sales.Order.Domain.Entities.Window", b =>
-                {
-                    b.Navigation("SubElements");
                 });
 #pragma warning restore 612, 618
         }

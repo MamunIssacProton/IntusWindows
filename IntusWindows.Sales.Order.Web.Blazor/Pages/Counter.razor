@@ -1,54 +1,40 @@
 ﻿@page "/counter"
+@using IntusWindows.Sales.Order.Web.Services.Hubs;
 @using IntusWindows.Sales.Order.Web.Blazor.Components;
+
+@inject IHubService hubService;
 <PageTitle>Counter</PageTitle>
 
-<h1>Counter</h1>
-
-<p role="status">Current count: @currentCount @name</p>
-<button class="btn btn-primary" @onclick="() => dialog.Show()">Open Dialog</button>
-<DialogBase @ref="dialog" Title="Example Dialog" OnSave="Create" IsSave="false">
-    <FormBase T="Mapper.State" OnModelCreate="OnTestDataCreated"></FormBase>
-
-</DialogBase>
-
-@*<DialogBase Title="Create New Dimension" CreateButtonText="Create Now" OnCreate="@CreateItem"></DialogBase>
-    <button class="btn btn-primary" @onclick="() => dialog.Show()">Open Dialog</button>
-    <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>*@
+<button class="btn btn-primary" @onclick="SendMessage">Send Message</button>
+<label>@message got the message!</label>
 
 @code {
     private int currentCount = 0;
-    string name { get; set; }
-    private void IncrementCount()
-    {
-        currentCount++;
+        string name { get; set; } = "Bismillah, AllahuAkbar";
+        string message { get; set; }
+        TestHub testHub { get; set; }
+        private void IncrementCount()
+        {
+            currentCount++;
+        }
+
+        protected override async Task OnInitializedAsync()
+        {
+            testHub = new TestHub("counter");
+
+            // hubService = new BaseHubService("counter");
+            await testHub.SubscribeToMessages<string>(HandleMessage, "counter");
+        }
+        private void HandleMessage(string message)
+        {
+            Console.WriteLine($"Received message: {message}");
+            this.message = message;
+        }
+
+        private async Task SendMessage()
+        {
+            await testHub.SendMessage(name, "counter");
+        }
     }
 
-    private DialogBase dialog;
-
-    async Task Create()
-    {
-        Console.WriteLine("notified from dialoug");
-    }
-
-    async Task OnTestDataCreated(Mapper.State data)
-    {
-
-        Console.WriteLine($"got lamda data :  {data.Name}");
-        name = data.Name;
-        dialog.CloseDialog();
-
-
-    }
-    //private void CloseDialoug()
-    //{
-    //    var baseComponent = this.FindComponent<DialogBase>();
-    //    baseComponent.Instance.CloseDialoug();
-    //}
-    class Lamda
-    {
-        public string Title { get; set; }
-
-        public int Price { get; set; }
-    }
-    }
 

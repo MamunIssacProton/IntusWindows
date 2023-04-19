@@ -1,0 +1,84 @@
+﻿@inject IElementService elementService;
+@inject IWindowService windowService;
+<button class="btn btn-primary" @onclick="() => dialog.Show()"> Create new Window</button>
+<DialogBase @ref="dialog" Title="Crate new Window" IsSave="EnableSave" OnSave="async()=>await OnCreateWindow()" CreateButtonText="Create">
+    <label>@message</label>
+    <div>
+        <input type="text" @bind="Window.Title" placeholder="Window Name" />
+        <label>
+            Quantity of Windows
+            <input type="number" @bind="Window.QuantityOfWindows" />
+        </label>
+        <label>Total Elements : @totalElements</label>
+        <label>select elements</label>
+        @foreach (var element in elements)
+        {
+            <label>
+                <input type="checkbox" checked="@selectedElements.Contains(element)" @onclick="()=>ToggleElementSelection(element)" />
+                @element.elementName
+            </label>
+        }
+    </div>
+
+
+</DialogBase>
+@code {
+    private DialogBase dialog;
+
+    string message = string.Empty;
+    Mapper.Window Window { get; set; } = new Mapper.Window() { ElementIds = new List<Guid>() };
+
+    List<ElementDTO> elements { get; set; } = new List<ElementDTO>();
+
+
+    List<ElementDTO> selectedElements { get; set; } = new List<ElementDTO>();
+    int totalElements { get; set; } = 0;
+
+    bool EnableSave { get; set; } = false;
+
+
+    void ToggleElementSelection(ElementDTO element)
+    {
+        if (selectedElements.Contains(element))
+        {
+            selectedElements.Remove(element);
+        }
+        else
+        {
+            selectedElements.Add(element);
+        }
+        totalElements= SyncElementsCount();
+        EnableSave = CheckSaveChangesEnable();
+        StateHasChanged();
+    }
+
+    bool CheckSaveChangesEnable() => selectedElements.Count > 0 ? true : false;
+    int SyncElementsCount() => selectedElements.Count;
+    protected override async Task OnInitializedAsync()
+    {
+        // dialog.Show();
+        elements.Clear();
+        elements.AddRange(await elementService.GetElementsAsync());
+    }
+
+    public void Show() => dialog.Show();
+
+
+
+    async Task OnCreateWindow()
+    {
+        Console.WriteLine($"window name : {Window.Title}");
+        Console.WriteLine("Element ids");
+        Window.ElementIds.Clear();
+        Window.Id =Guid.NewGuid();
+        Window.ElementIds.AddRange(selectedElements.Select(x => x.Id.Value));
+      //  Window.
+        foreach (var element in Window.ElementIds)
+        {
+            Console.WriteLine($"{element}");
+        }
+        var response = await windowService.CreateNewWindowAsync(Window);
+        message = response.Message;
+    }
+    }
+

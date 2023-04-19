@@ -23,9 +23,15 @@ public sealed class WindowRepository : BaseContextRepository, IWindowRepository
         return new ApiResultDTO(true, window.Id.ToString());
     }
 
-    public async ValueTask<IReadOnlyList<Window>> GetAllWindowsListAsync()
+    public async ValueTask<IReadOnlyList<WindowDTO>> GetAllWindowsListAsync()
     {
-        return context.Windows.Include(x => x.SubElements).ThenInclude(x => x.dimension).ToList().AsReadOnly();
+        return context.Windows.AsNoTracking()
+                              .Include(x => x.SubElements)
+                              .ThenInclude(x => x.dimension)
+                              .Select(x=>new WindowDTO(x.Id,x.windowName,x.TotalSubElements,x.QuantityOfWindows,
+                               new List<ElementDTO>(x.SubElements.Select(s=>new ElementDTO(s.Id,s.elementName,s.dimension.Width,s.dimension.Height,s.dimension.Id)))
+                              ))
+                              .ToList().AsReadOnly();
 
     }
 

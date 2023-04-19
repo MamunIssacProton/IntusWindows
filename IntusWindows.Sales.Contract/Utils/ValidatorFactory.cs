@@ -154,5 +154,19 @@ public class ValidatorFactory
 
         }
     }
+
+    public static void Validate(Mapper.Order order)
+    {
+        ValidateName(propertyName: nameof(order.OrderName), order.OrderName);
+
+        ValidateGuid(propertyName: nameof(order.Id), order.Id);
+
+        ValidateGuid(propertyName: nameof(order.StateId), order.StateId);
+
+        foreach (var id in order.Windows)
+        {
+            ValidateGuid(propertyName: "WindowId",value: id);
+        }
+    }
 }
 

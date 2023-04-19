@@ -240,8 +240,9 @@ tbody td {
 /*    position: absolute;
     z-index: 999;*/
     display: none;
-    background-color: coral;
+    background-color:white;
     position: absolute;
+    width:7rem;
 /*    top: 0;
     left: 0;
     animation-name: move;
@@ -252,13 +253,22 @@ tbody td {
 /* Context menu list style */
 .context-menu {
     list-style: none;
-    border: 1px solid #ccc;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    position: absolute;
+    border: 1px solid thin;
+    box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
+    /*    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);*/
+    /*    position: absolute;
     background-color: white;
     border: 1px solid black;
-    width:5rem;
+   */ width: 15rem;
+   
     z-index: 999;
+    /*   border: 1px dashed;
+    height: 150px;
+    padding: 10px;
+    position: relative;
+   
+    color: gray;
+    user-select: none;*/
 }
     /* Context menu item style */
     .context-menu li {
@@ -270,3 +280,43 @@ tbody td {
         .context-menu li:hover {
             background-color: #f2f2f2;
         }
+
+.dropdown {
+    position: relative;
+    background-color:ghostwhite;
+    color:gold;
+}
+
+.dropdown-toggle {
+    border: none;
+    background-color: #f8f9fa;
+    color: #212529;
+}
+
+    .dropdown-toggle:focus {
+        outline: none;
+        box-shadow: none;
+    }
+
+.dropdown-menu {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-item input[type="checkbox"] {
+    margin-right: 0.5rem;
+}
+
+
+.btn-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.icon {
+    margin-right: 0.5rem;
+    font-size: 0.8rem;
+}

@@ -1,7 +1,7 @@
 ﻿@page "/createDimension"
 @inject IDimensionService dimensionService;
 <DialogBase @ref="dialog" Title="Create new Dimension">
-    <FormBase T="Mapper.Dimension" TOption="Mapper.Dimension" HasDimensions="true" OnModelCreate="OnDimensionCreated" SaveButtonText="Create Dimension"></FormBase>
+    <FormBase T="Mapper.Dimension" HasDimensions="true" OnModelCreate="OnDimensionCreated" SaveButtonText="Create Dimension"></FormBase>
 </DialogBase>
 <label>@message</label>
 

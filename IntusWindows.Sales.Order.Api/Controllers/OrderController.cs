@@ -1,9 +1,11 @@
 ﻿using System;
 using IntusWindows.Sales.Contract.DTOs;
+using IntusWindows.Sales.Contract.Models.Map;
 using IntusWindows.Sales.Order.Api.ApplicationServices;
 using IntusWindows.Sales.Order.Api.Commands.Create;
 using IntusWindows.Sales.Order.Api.Commands.Delete;
 using IntusWindows.Sales.Order.Api.Commands.Update;
+using IntusWindows.Sales.Order.Domain.ValueObjects;
 using Microsoft.AspNetCore.Mvc;
 namespace IntusWindows.Sales.Order.Api.Controllers;
 
@@ -18,7 +20,7 @@ public class OrderController : ControllerBase
     }
 
     [HttpGet("list")]
-    public async ValueTask<IReadOnlyList<Domain.Entities.Order>> GetOrderListAsync()
+    public async ValueTask<IReadOnlyList<OrderDTO>> GetOrderListAsync()
                                                          => await this.applicationService.GetOrdersListAsync();
 
 
@@ -28,8 +30,8 @@ public class OrderController : ControllerBase
                                                           => await this.applicationService.HandleCommand(command);
 
 
-    [HttpPut("changeDimension")]
-    public async ValueTask<ApiResultDTO> ChangeDimensionInOrderAsync(ChangeDimensionFromOrderCommand command)
+    [HttpPut("changeDimensions")]
+    public async ValueTask<ApiResultDTO> ChangeDimensionInOrderAsync(List<Mapper.ChangeDimensionFormOrder> command)
 
                                                                => await this.applicationService.HandleCommand(command);
 
@@ -37,28 +39,49 @@ public class OrderController : ControllerBase
     [HttpPut("changeOrderName")]
     public async ValueTask<ApiResultDTO> ChangeOrderName(ChangeOrderNameCommand command)
 
-                                                    => await this.applicationService.HandleCommand(command);
+                                                      => await this.applicationService.HandleCommand(command);
 
 
-    [HttpDelete("element")]
-    public async ValueTask<ApiResultDTO> DeleteElementFromOrder(DeleteElementFromOrderCommand command)
+    [HttpPut("changeStateInOrder")]
+    public async ValueTask<ApiResultDTO> ChangeStateInOrder(ChangeStateInOrderCommand command)
+                                                        => await this.applicationService.HandleCommand(command);
+
+    [HttpPost("deleteElementsFromOrder")]
+    public async ValueTask<ApiResultDTO> DeleteElementsFromOrder(DeleteElementsFromOrderCommand command)
 
                                                          => await this.applicationService.HandleCommand(command);
 
 
 
-    [HttpDelete("window")]
+    [HttpPost("window")]
     public async ValueTask<ApiResultDTO> DeleteWindowFromOrder(DeleteWindowFromOrderCommand command)
 
                                                          => await this.applicationService.HandleCommand(command);
 
 
-    [HttpDelete("order")]
+    [HttpDelete("{orderId}")]
 
-    public async ValueTask<ApiResultDTO> DeleteOrder(DeleteOrderCommand command)
+    public async ValueTask<ApiResultDTO> DeleteOrder(Guid orderId)
+    {
+        
 
-                                            => await this.applicationService.HandleCommand(command);
-
-
+        try
+        {
+            if (orderId != default)
+            {
+                var command = new DeleteOrderCommand()
+                {
+                    OrderId = orderId
+                };
+                return await this.applicationService.HandleCommand(command);
+            }
+            return new ApiResultDTO(false, "Order id cannot be default");
+        }
+        catch (Exception ex)
+        {
+            return new ApiResultDTO(false, ex.Message);
+        }
+    }
+                             
 }
 

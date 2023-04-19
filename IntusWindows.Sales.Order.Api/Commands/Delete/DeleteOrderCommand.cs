@@ -2,7 +2,7 @@
 
 public class DeleteOrderCommand
 {
-	public required Guid OrderId { get; set; }
+	public Guid OrderId { get; set; }
 
 }
 

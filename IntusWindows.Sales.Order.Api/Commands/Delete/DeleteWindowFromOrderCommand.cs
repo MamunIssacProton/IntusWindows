@@ -4,7 +4,7 @@ public class DeleteWindowFromOrderCommand
 {
 	public required Guid OrderId { get; set; }
 
-	public required Guid WindowId { get; set; }
+	public required List<Guid> WindowIds { get; set; }
 
 
 
