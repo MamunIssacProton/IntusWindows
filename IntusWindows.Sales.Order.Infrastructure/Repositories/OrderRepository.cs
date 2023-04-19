@@ -52,15 +52,6 @@ public sealed class OrderRepository : BaseContextRepository, IOrderRepository
 
             context.Orders.Update(order);
 
-            foreach (var a in order.Windows)
-            {
-                foreach (var s in a.SubElements)
-                {
-                     Console.WriteLine($"updated order : element {s.Id} with {s.dimension.Id}");
-                }
-              
-            }
-            
         }
 
   
@@ -190,9 +181,31 @@ public sealed class OrderRepository : BaseContextRepository, IOrderRepository
         return new ApiResultDTO(true, $"successfully removed windows from order");
     }
 
+    public async ValueTask<OrderDTO> GetOrderByIdAsync(Guid orderId)
+    {
+        var order = await this.context.Orders.AsNoTracking()
+                                        .Include(x => x.Windows)
+                                   .ThenInclude(s => s.SubElements)
+                                   .ThenInclude(d => d.dimension)
+                                   .FirstOrDefaultAsync(x => x.Id == orderId);
+
+        if (order != null)
+        {
+            return new OrderDTO(order.Id, order.OrderName, order.State, order.Windows
+                       .Select(w => new WindowDTO(w.Id, w.windowName, w.TotalSubElements, w.QuantityOfWindows,
+                               w.SubElements
+                                .Select(se => new ElementDTO(se.Id, se.elementName, se.dimension.Width, se.dimension.Height, se.dimension.Id))
+                                .ToList()))
+                       .ToList());
+        }
+
+        throw new Exception($"no order has found with id : {orderId}");
+
+    }
+
     public async ValueTask<IReadOnlyList<OrderDTO>> GetOrdersListAsync()
     {
-        return this.context.Orders.AsNoTracking()
+        return  this.context.Orders.AsNoTracking()
                                    .Include(x => x.Windows)
                                    .ThenInclude(s => s.SubElements)
                                    .ThenInclude(d => d.dimension)

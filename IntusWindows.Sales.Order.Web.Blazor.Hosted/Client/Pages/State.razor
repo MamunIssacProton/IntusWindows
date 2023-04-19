@@ -1,35 +1,76 @@
 ﻿@page "/state";
 @inject IStateService stateService;
-@using IntusWindows.Sales.Order.Web.Blazor.Components;
-@using IntusWindows.Sales.Order.Web.Services.Interfaces
-@using IntusWindows.Sales.Order.Web.Services.Services
-@using IntusWindows.Sales.Contract.DTOs
-@using IntusWindows.Sales.Contract.Models.Map
-@inject ProgressService progressService;
 
+@inject ProgressService progressService;
+@inject NavigationManager Navigation
 @implements IDisposable;
-<h3>Sate Management</h3>
 <h5>Progress : @Progress</h5>
-<DataTableBase T="StateDTO" Data="States"></DataTableBase>
 <label>@Messgae</label>
 <button class="btn btn-primary" @onclick="() => dialog.Show()">Create new State</button>
 <DialogBase @ref="dialog" Title="Create new State" IsSave="false">
     <FormBase T="Mapper.State" OnModelCreate="OnSateCreated" SaveButtonText="Create" SkipProperty="Id"></FormBase>
 
 </DialogBase>
+<DataTableBase T="StateDTO" Data="States"></DataTableBase>
 @code {
 
-    List<StateDTO> States = new List<StateDTO>();
+    public List<StateDTO> States { get; set; } = new List<StateDTO>();
     private DialogBase dialog;
+    private HubConnection? hubConnection;
 
     string Messgae { get; set; }
     long Progress;
     protected override async Task OnInitializedAsync()
     {
+        hubConnection = new HubConnectionBuilder()
+       .WithUrl(Navigation.ToAbsoluteUri($"/hub/{HubGroups.State}"))
+       .Build();
+
+        await hubConnection.StartAsync();
+
+        await hubConnection.InvokeAsync(HubMethods.JoinGroup);
+
+
+        hubConnection.On<HubOperations, StateDTO>(HubMethods.ReceiveMessage, (HubOperations operation, StateDTO state) =>
+        {
+            switch (operation)
+            {
+                case HubOperations.Created:
+                    if (this.States.Contains(state))
+                        return;
+                    this.States.Add(state);
+                    StateHasChanged();
+                    break;
+
+                case HubOperations.Deleted:
+                    if (this.States.Contains(state))
+                    {
+                        States.Remove(state);
+                        StateHasChanged();
+                    }
+                    break;
+
+                case HubOperations.Updated:
+                    var index = this.States.FindIndex(x => x.Id == state.Id);
+                    if (index != -1)
+                    {
+                        this.States[index] = state;
+                        StateHasChanged();
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+        });
+
         progressService.ProgressChanged += OnProgressChanged;
         States.Clear();
         States.AddRange(await stateService.GetStatesAsync());
     }
+
+
+
     void OnProgressChanged(object sender, long progress)
     {
         this.Progress = progress;
@@ -48,9 +89,17 @@
     {
         Messgae = $"{state.Name} has created successfully!";
         state.Id = Guid.NewGuid();
-        await stateService.CreateState(state);
+        ValidatorFactory.Validate(state);
+        var res = await stateService.CreateState(state);
+        if (res.Ok && hubConnection != null)
+        {
+            await hubConnection.InvokeAsync(HubMethods.BroadcastToGroup, HubOperations.Created, new StateDTO(state.Id, state.Name));
+
+        }
         dialog.CloseDialog();
         StateHasChanged();
     }
-    }
+
+
+}
 

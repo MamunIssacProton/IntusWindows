@@ -1,8 +1,4 @@
-﻿@using IntusWindows.Sales.Order.Web.Services.Interfaces
-@using Microsoft.AspNetCore.Components
-@using IntusWindows.Sales.Contract.Models.Map
-@using IntusWindows.Sales.Contract.DTOs
-@inject IElementService elementService;
+﻿@inject IElementService elementService;
 @inject IWindowService windowService;
 <button class="btn btn-primary" @onclick="() => dialog.Show()"> Create new Window</button>
 <DialogBase @ref="dialog" Title="Crate new Window" IsSave="EnableSave" OnSave="async()=>await OnCreateWindow()" CreateButtonText="Create">
@@ -17,10 +13,12 @@
         <label>select elements</label>
         @foreach (var element in elements)
         {
-            <label>
-                <input type="checkbox" checked="@selectedElements.Contains(element)" @onclick="()=>ToggleElementSelection(element)" />
-                @element.elementName
-            </label>
+            <ul>
+                <label>
+                    <input type="checkbox" checked="@selectedElements.Contains(element)" @onclick="()=>ToggleElementSelection(element)" />
+                    @element.elementName
+                </label>
+            </ul>
         }
     </div>
 
@@ -36,6 +34,10 @@
 
 
     List<ElementDTO> selectedElements { get; set; } = new List<ElementDTO>();
+
+    [Parameter]
+    public HubConnection? connection { get; set; }
+
     int totalElements { get; set; } = 0;
 
     bool EnableSave { get; set; } = false;
@@ -51,7 +53,7 @@
         {
             selectedElements.Add(element);
         }
-        totalElements= SyncElementsCount();
+        totalElements = SyncElementsCount();
         EnableSave = CheckSaveChangesEnable();
         StateHasChanged();
     }
@@ -60,7 +62,6 @@
     int SyncElementsCount() => selectedElements.Count;
     protected override async Task OnInitializedAsync()
     {
-        // dialog.Show();
         elements.Clear();
         elements.AddRange(await elementService.GetElementsAsync());
     }
@@ -71,18 +72,23 @@
 
     async Task OnCreateWindow()
     {
-        Console.WriteLine($"window name : {Window.Title}");
-        Console.WriteLine("Element ids");
+
         Window.ElementIds.Clear();
-        Window.Id =Guid.NewGuid();
+        Window.Id = Guid.NewGuid();
         Window.ElementIds.AddRange(selectedElements.Select(x => x.Id.Value));
-      //  Window.
-        foreach (var element in Window.ElementIds)
-        {
-            Console.WriteLine($"{element}");
-        }
+        ValidatorFactory.Validate(Window);
         var response = await windowService.CreateNewWindowAsync(Window);
-        message = response.Message;
+        if (response.Ok&& connection != null)
+        {
+
+            await connection.InvokeAsync(HubMethods.BroadcastToGroup,HubOperations.Created,
+                                                    new WindowDTO(Window.Id, Window.Title,
+                                                                  selectedElements.Count,
+                                                                  Window.QuantityOfWindows,
+                                                                  selectedElements));
+            dialog.CloseDialog();
+        }
+
     }
-    }
+}
 

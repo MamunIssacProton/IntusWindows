@@ -1,14 +1,8 @@
 ﻿@page "/order"
-@using IntusWindows.Sales.Order.Web.Blazor.Components;
-@using IntusWindows.Sales.Order.Web.Services.Interfaces
-@using IntusWindows.Sales.Order.Web.Services.Services
-@using Microsoft.AspNetCore.Components
-@using IntusWindows.Sales.Contract.DTOs
-@using IntusWindows.Sales.Contract.Models
-@using IntusWindows.Sales.Contract.Models.Map
+@inject NavigationManager Navigation
 @inject ProgressService progressService;
 @implements IDisposable;
-@inject IOrderService orderSerive;
+@inject IOrderService orderService;
 @inject IWindowService windowsService;
 @inject IStateService stateService;
 
@@ -50,39 +44,6 @@
             <span>windows Information</span>
         </ul>
 
-
-
-        @*<DataTableBase T="WindowDTO" Data="selectedOrder.WindowsIds"></DataTableBase>*@
-        @*@foreach (var window in selectedOrder.windows)
-            {
-                <ul>
-                    <label>Name @window.windowName</label>
-                </ul>
-                <ul>
-                    <label>QuantityOfWindows @window.quantityOfWindows</label>
-                </ul>
-                <ul>
-                    <label>Total Sub elements @window.totalSubElements</label>
-
-                </ul>
-
-                <ul>
-                    <label>Elements</label>
-                    @foreach (var element in window.Elements)
-                    {
-                        <ul>
-
-                            <span>Name : @element.elementName</span>
-                            <ul>
-                                Dimension:
-                                H:  @element.height X W:  @element.width
-                                <button class="btn btn-primary">Change Dimension</button>
-                            </ul>
-                        </ul>
-
-                    }
-                </ul>
-            }*@
         <WindowTreeViewComponent ShowDetails="true" HasChangeDimension="false" windows="treeNodes"></WindowTreeViewComponent>
     }
 </DialogBase>
@@ -95,7 +56,7 @@
         <span>State : @selectedOrder.State</span>
         <span>windows Information</span>
 
-        <WindowTreeViewComponent ShowDetails="true" HasChangeDimension="true" OnDimensionChangeConfirm="async (e) => await OnDimensionChanged(e as List<Mapper.ChangeDimensionFormOrder>)" windows="treeNodes" OnConfirm="async (e) => await OnConfirmElementsDeletion(e as List<ElementNode>)"></WindowTreeViewComponent>
+        <WindowTreeViewComponent ShowDetails="true" HasChangeDimension="true" OnDimensionChangeConfirm="async (e) => await OnDimensionChanged(e as List<Mapper.ChangeDimensionFormOrder>)" windows="treeNodes"></WindowTreeViewComponent>
     }
 </DialogBase>
 

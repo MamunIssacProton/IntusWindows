@@ -61,6 +61,13 @@ public class OrderService:BaseService,IOrderService
           
     }
 
+    public async ValueTask<OrderDTO> GetOrderByIdAsync(Guid orderId)
+    {
+        var result = await client.GetWithProgressAsync($"/api/order/{orderId}");
+        return JsonConvert.DeserializeObject<OrderDTO>(await result.Content.ReadAsStringAsync());
+
+    }
+
     public async ValueTask<List<OrderDTO>> GetOrdersListAsync()
     {
         var result = await client.GetWithProgressAsync("/api/order/list");

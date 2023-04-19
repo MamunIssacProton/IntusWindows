@@ -4,12 +4,10 @@ using IntusWindows.Sales.Order.Web.Services.Interfaces;
 using IntusWindows.Sales.Order.Web.Services.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Http;
-namespace IntusWindows.Sales.Order.Web.Services.ExtensionMethods;
 
-using IntusWindows.Sales.Order.Web.Services.Hubs;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.SignalR;
+namespace IntusWindows.Sales.Order.Web.Services.ExtensionMethods;
 
 public static class DIExtensions
 {
@@ -35,16 +33,18 @@ public static class DIExtensions
         return services;
     }
 
-    public static IServiceCollection AddSignalrService(this IServiceCollection services)
-    {
+    //public static IServiceCollection AddSignalrService(this IServiceCollection services)
+    //{
 
-        services.AddTransient<IHubService, BaseHubService>(provider =>
-        {
-            var hubUri = provider.GetRequiredService<NavigationManager>().ToAbsoluteUri("counter").ToString();
-            return new BaseHubService(hubUri);
-        });
-        services.AddSingleton<TestHub>();
-        return services;
-    }
+    //    services.AddTransient<IHubService, BaseHubService>(provider =>
+    //    {
+    //        var hubUri = provider.GetRequiredService<NavigationManager>().ToAbsoluteUri("counter").ToString();
+    //        return new BaseHubService(hubUri);
+    //    });
+    //  //  services.AddSingleton<TestHub>();
+    //    return services;
+    //}
+
+   
 
 }

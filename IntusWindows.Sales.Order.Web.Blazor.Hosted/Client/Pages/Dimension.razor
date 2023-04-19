@@ -1,0 +1,69 @@
+﻿@page "/dimension"
+@inject IDimensionService dimensionService
+@inject NavigationManager Navigation
+@implements IDisposable
+
+<IntusWindows.Sales.Order.Web.Blazor.Hosted.Client.Components.Dimension.CreateDimensionComponent hubConnection="hubConnection">
+
+</IntusWindows.Sales.Order.Web.Blazor.Hosted.Client.Components.Dimension.CreateDimensionComponent>
+<DataTableBase T="DimensionDTO" Data="dimensions"></DataTableBase>
+
+@code {
+    private DialogBase dialog;
+    List<DimensionDTO> dimensions { get; set; } = new List<DimensionDTO>();
+    private HubConnection? hubConnection;
+
+    protected override async Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+       .WithUrl(Navigation.ToAbsoluteUri($"/hub/{HubGroups.Dimension}"))
+       .Build();
+        await hubConnection.StartAsync();
+        await hubConnection.InvokeAsync(HubMethods.JoinGroup);
+        hubConnection.On<HubOperations, DimensionDTO>(HubMethods.ReceiveMessage, (HubOperations operation, DimensionDTO dimension) =>
+        {
+            switch (operation)
+            {
+                case HubOperations.Created:
+                    if (this.dimensions.Contains(dimension))
+                        return;
+                    this.dimensions.Add(dimension);
+                    StateHasChanged();
+                    break;
+
+                case HubOperations.Deleted:
+                    if (this.dimensions.Contains(dimension))
+                    {
+                        dimensions.Remove(dimension);
+                        StateHasChanged();
+                    }
+                    break;
+
+                case HubOperations.Updated:
+                    var index = this.dimensions.FindIndex(x => x.id == dimension.id);
+                    if (index != -1)
+                    {
+                        this.dimensions[index] = dimension;
+                        StateHasChanged();
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+        });
+
+
+        dimensions.Clear();
+        dimensions.AddRange(await dimensionService.GetAllDimensionsListAsync());
+    }
+
+
+    public void Dispose()
+    {
+       
+        Console.WriteLine("unregistering the update");
+
+    }
+}
+

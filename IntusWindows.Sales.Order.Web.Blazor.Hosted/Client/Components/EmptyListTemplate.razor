@@ -1,0 +1,29 @@
+﻿
+<div class="empty-list-container">
+    <div class="alert alert-primary">
+        <span>No items to display.</span>
+    </div>
+</div>
+<style>
+    .empty-list-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    .empty-list-message {
+        background-color: #f5f5f5;
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+        font-size: 20px;
+        color: #777777;
+    }
+</style>
+
+@code {
+    [Parameter]
+    public string Message { get; set; }
+}
+

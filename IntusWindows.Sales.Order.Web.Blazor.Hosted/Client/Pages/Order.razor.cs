@@ -1,5 +1,6 @@
 ﻿using System;
 using IntusWindows.Sales.Contract.DTOs;
+using IntusWindows.Sales.Contract.Enums;
 using IntusWindows.Sales.Contract.Models;
 using IntusWindows.Sales.Contract.Models.Map;
 using IntusWindows.Sales.Contract.Utils;
@@ -7,6 +8,7 @@ using IntusWindows.Sales.Order.Web.Blazor.Components;
 using IntusWindows.Sales.Order.Web.Blazor.ContextMenuOptions;
 using IntusWindows.Sales.Order.Web.Blazor.Hosted.Client.Components;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.SignalR.Client;
 
 namespace IntusWindows.Sales.Order.Web.Blazor.Hosted.Client.Pages
 {
@@ -68,8 +70,47 @@ namespace IntusWindows.Sales.Order.Web.Blazor.Hosted.Client.Pages
 
         private OrderDTO selectedOrder { get; set; }
 
+        private HubConnection? hubConnection;
+
         protected override async Task OnInitializedAsync()
         {
+            hubConnection = new HubConnectionBuilder()
+           .WithUrl(Navigation.ToAbsoluteUri($"/hub/{HubGroups.Order}"))
+           .Build();
+            await hubConnection.StartAsync();
+            await hubConnection.InvokeAsync(HubMethods.JoinGroup);
+            hubConnection.On<HubOperations, OrderDTO>(HubMethods.ReceiveMessage, (HubOperations operation, OrderDTO order) =>
+            {
+                switch (operation)
+                {
+                    case HubOperations.Created:
+                        if (this.orders.Contains(order))
+                            return;
+                        this.orders.Add(order);
+                        StateHasChanged();
+                        break;
+
+                    case HubOperations.Deleted:
+                        if (this.orders.Contains(order))
+                        {
+                            orders.Remove(order);
+                            StateHasChanged();
+                        }
+                        break;
+
+                    case HubOperations.Updated:
+                        var index = this.orders.FindIndex(x => x.Id == order.Id);
+                        if (index != -1)
+                        {
+                            this.orders[index] = order;
+                            StateHasChanged();
+                        }
+                        break;
+                    default:
+                        break;
+                }
+
+            });
             states.Clear();
             windows.Clear();
 
@@ -92,8 +133,8 @@ namespace IntusWindows.Sales.Order.Web.Blazor.Hosted.Client.Pages
             });
             contextMenuItems.Add(new ContextMenuItem()
             {
-                Text="Change Dimension from this order",
-                Value= "changeDimension"
+                Text = "Change Dimension from this order",
+                Value = "changeDimension"
             });
             contextMenuItems.Add(new ContextMenuItem()
             {
@@ -118,8 +159,10 @@ namespace IntusWindows.Sales.Order.Web.Blazor.Hosted.Client.Pages
             states.AddRange(await stateService.GetStatesAsync());
 
             windows.AddRange(await windowsService.GetWindowListAsync());
-            orders.AddRange(await orderSerive.GetOrdersListAsync());
+            orders.AddRange(await orderService.GetOrdersListAsync());
         }
+
+
 
         void ToggleWindowSelection(WindowDTO window)
         {
@@ -205,7 +248,7 @@ namespace IntusWindows.Sales.Order.Web.Blazor.Hosted.Client.Pages
             }
             order.Windows.AddRange(selectedWindows.Select(x => x.Id));
             ValidatorFactory.Validate(order);
-            var res = await orderSerive.GenerateNewOrder(order);
+            var res = await orderService.GenerateNewOrder(order);
             Message = res.Message;
 
         }
@@ -221,7 +264,7 @@ namespace IntusWindows.Sales.Order.Web.Blazor.Hosted.Client.Pages
             //
             Console.WriteLine($"oon delete windows dats : {order.WindowIds}");
 
-            var response = await orderSerive.DeleteWindowFromOrderAsync(order);
+            var response = await orderService.DeleteWindowFromOrderAsync(order);
             Console.WriteLine($"res:{response.Message}");
             Message = response.Ok.ToString();
         }
@@ -243,6 +286,7 @@ namespace IntusWindows.Sales.Order.Web.Blazor.Hosted.Client.Pages
             switch (item.Value)
             {
                 case "details":
+                    GenerateTreeNodes();
                     dialogOrderDetails.Show();
                     StateHasChanged();
                     break;
@@ -289,22 +333,28 @@ namespace IntusWindows.Sales.Order.Web.Blazor.Hosted.Client.Pages
         {
 
             Message = selectedOrder.Id.ToString();
-            var res = await orderSerive.ChangeStateInOrderByIdAsync(new Mapper.ChangeStateInOrder()
+            var res = await orderService.ChangeStateInOrderByIdAsync(new Mapper.ChangeStateInOrder()
             {
                 OrderId = selectedOrder.Id,
                 StateId = Guid.Parse(selectedState)
             });
 
-            Message = res.Message;
+            if (res.Ok)
+            {
+                await SyncOrderWithOperation(HubOperations.Updated, selectedOrder.Id);
+            }
         }
 
         private async Task DeleteOrder()
         {
-            var res = await orderSerive.DeleteOrderByIdAsync(new Mapper.DeleteOrder()
+            var res = await orderService.DeleteOrderByIdAsync(new Mapper.DeleteOrder()
             {
                 OrderId = selectedOrder.Id
             });
-            Message = res.Message;
+            if (res.Ok)
+            {
+                await SyncOrderWithOperation(HubOperations.Deleted, selectedOrder.Id);
+            }
         }
 
         private async ValueTask OnDeleteElement()
@@ -324,11 +374,15 @@ namespace IntusWindows.Sales.Order.Web.Blazor.Hosted.Client.Pages
             foreach (var order in dimensionsInOrder)
             {
                 order.OrderId = selectedOrder.Id;
-                
+
             }
-            var res = await orderSerive.ChangeDimensionsFromOrderByIdAsync(dimensionsInOrder);
+               var res = await orderService.ChangeDimensionsFromOrderByIdAsync(dimensionsInOrder);
             if (res.Ok)
-                dialogOrderDetails.CloseDialog();
+            {
+                await SyncOrderWithOperation(HubOperations.Updated, selectedOrder.Id);
+                dialogChangeDimension.CloseDialog();
+            }
+            
         }
 
         void GenerateTreeNodes()
@@ -346,9 +400,9 @@ namespace IntusWindows.Sales.Order.Web.Blazor.Hosted.Client.Pages
                 };
                 foreach (var element in window.Elements)
                 {
-                    node.elements.Add(new ElementNode(window.Id,element.Id.Value,element.elementName,false,element.dimensionId));
+                    node.elements.Add(new ElementNode(window.Id, element.Id.Value, element.elementName, false, element.dimensionId));
                 }
-               // node.elements.AddRange(window.);
+                // node.elements.AddRange(window.);
 
 
                 treeNodes.Add(node);
@@ -356,35 +410,48 @@ namespace IntusWindows.Sales.Order.Web.Blazor.Hosted.Client.Pages
             }
         }
 
-            async Task OnChangeOrderName()
+        async Task OnChangeOrderName()
+        {
+            if (string.IsNullOrEmpty(ChangedOrderName))
+                return;
+            OrderDTO modifiedName = this.selectedOrder with { OrderName = ChangedOrderName };
+            var res = await orderService.ChangeOrderNameByIdAsync(new Mapper.ChangeOrderName()
             {
-                if (string.IsNullOrEmpty(ChangedOrderName))
-                    return;
-                OrderDTO modifiedName = this.selectedOrder with { OrderName = ChangedOrderName };
-                var res = await orderSerive.ChangeOrderNameByIdAsync(new Mapper.ChangeOrderName()
-                {
-                    Id = modifiedName.Id,
-                    OrderName = modifiedName.OrderName
-                });
-                Console.WriteLine($"res : {res.Message}");
+                Id = modifiedName.Id,
+                OrderName = modifiedName.OrderName
+            });
+            await SyncOrderWithOperation(HubOperations.Updated, selectedOrder.Id);
+            Console.WriteLine($"res : {res.Message}");
 
-            }
+        }
 
-            async Task OnConfirmElementsDeletion(List<ElementNode> elements)
+        async Task OnConfirmElementsDeletion(List<ElementNode> elements)
+        {
+            if (selectedOrder != null)
             {
-                if (selectedOrder != null)
+                var response = await orderService.DeleteElementsFromOrderAsync(
+                     new Mapper.DeleteElementsFromOrdr()
+                     {
+                         OrderId = selectedOrder.Id,
+                         Elements = elements
+                     });
+                if (response.Ok)
                 {
-                    var response = await orderSerive.DeleteElementsFromOrderAsync(
-                         new Mapper.DeleteElementsFromOrdr()
-                         {
-                             OrderId = selectedOrder.Id,
-                             Elements = elements
-                         });
-
-                    Console.WriteLine($"res: {response.Message}");
+                    await SyncOrderWithOperation(HubOperations.Updated, selectedOrder.Id);
+                    dialogDeleteElement.CloseDialog();
                 }
+
+                Console.WriteLine($"res: {response.Message}");
             }
         }
-    
+
+        async Task SyncOrderWithOperation(HubOperations operation,Guid orderId)
+        {
+            var  updatedOrder= await orderService.GetOrderByIdAsync(orderId);
+            await hubConnection.InvokeAsync(HubMethods.BroadcastToGroup, operation, updatedOrder);
+         
+        }
+    }
+
 }
 

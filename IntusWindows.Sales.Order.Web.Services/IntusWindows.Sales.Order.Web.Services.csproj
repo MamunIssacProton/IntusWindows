@@ -16,11 +16,9 @@
     <None Remove="Services\" />
     <None Remove="Interfaces\" />
     <None Remove="ExtensionMethods\" />
-    <None Remove="Hubs\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ExtensionMethods\" />
-    <Folder Include="Hubs\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />

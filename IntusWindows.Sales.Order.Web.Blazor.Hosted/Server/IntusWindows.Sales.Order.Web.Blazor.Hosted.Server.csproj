@@ -18,4 +18,12 @@
   </ItemGroup>
 
 
+  <ItemGroup>
+    <None Remove="Hubs\" />
+    <None Remove="ExtensionMethods\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Hubs\" />
+    <Folder Include="ExtensionMethods\" />
+  </ItemGroup>
 </Project>

@@ -1,5 +1,9 @@
+using IntusWindows.Sales.Contract.Utils;
+using IntusWindows.Sales.Order.Web.Blazor.Hosted.Server.Hubs;
+using IntusWindows.Sales.Order.Web.Services.Interfaces;
+using IntusWindows.Sales.Order.Web.Services.Services;
 using Microsoft.AspNetCore.ResponseCompression;
-
+using IntusWindows.Sales.Order.Web.Blazor.Hosted.Server.ExtensionMethods;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -12,7 +16,7 @@ builder.Services.AddResponseCompression(opts =>
     opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
         new[] { "application/octet-stream" });
 });
-
+//builder.Services.AddScoped<IHubService, BaseHubService>();
 var app = builder.Build();
 app.UseResponseCompression();
 // Configure the HTTP request pipeline.
@@ -33,8 +37,7 @@ app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
 app.UseRouting();
-
-
+app.MapAllHubs();
 app.MapRazorPages();
 app.MapControllers();
 app.MapFallbackToFile("index.html");

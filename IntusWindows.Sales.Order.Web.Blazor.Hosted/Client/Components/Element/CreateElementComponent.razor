@@ -1,5 +1,5 @@
-﻿@inject IDimensionService dimensionService;
-@inject IElementService elementService;
+﻿@inject IDimensionService dimensionService
+@inject IElementService elementService
 @using IntusWindows.Sales.Order.Web.Services.Interfaces
 @using IntusWindows.Sales.Order.Web.Services.Services
 @using Microsoft.AspNetCore.Components
@@ -38,6 +38,9 @@
     long Progress;
     string msg;
 
+    [Parameter]
+    public HubConnection? hubConnection { get; set; }
+
     List<DimensionDTO> dimensions { get; set; } = new List<DimensionDTO>();
 
     Mapper.Element Element { get; set; } = new Mapper.Element();
@@ -47,7 +50,7 @@
         progressService.ProgressChanged += OnProgressChanged;
         dimensions.Clear();
         dimensions.AddRange(await dimensionService.GetAllDimensionsListAsync());
-        
+
     }
 
     void OnProgressChanged(object sender, long progress)
@@ -63,11 +66,25 @@
         Element.Id = Guid.NewGuid();
         ValidatorFactory.Validate(Element);
         Progress = 0;
-        await elementService.CreateElement(Element);
+        var res= await elementService.CreateElement(Element);
+        if (res.Ok && hubConnection != null)
+        {
+            string dimensionId = Element.DimensionId;
+            decimal width, height;
+            decimal.TryParse(dimensionId.Split('-')[1].Split('X')[0], out width);
+
+            decimal.TryParse(dimensionId.Split('-')[1].Split('X')[1],out height);
+
+            await hubConnection.InvokeAsync(HubMethods.BroadcastToGroup, HubOperations.Created,
+                                                new ElementDTO(Element.Id, Element.Name,width, height,Element.DimensionId));
+
+            dialog.CloseDialog();
+        }
+
 
     }
     public void Dispose() =>
-           progressService.ProgressChanged -= OnProgressChanged;
+       progressService.ProgressChanged -= OnProgressChanged;
 
     }
 
