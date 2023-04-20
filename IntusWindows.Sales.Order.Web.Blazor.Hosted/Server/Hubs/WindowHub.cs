@@ -14,6 +14,11 @@ public class WindowHub:Hub
         await Clients.All.SendAsync("RecieveMessage", message);
     }
 
+    [HubMethodName(nameof(HubMethods.SendNotification))]
+    public async Task SendNotification(string connectionId, string message)
+    {
+        await Clients.User(connectionId).SendAsync(HubMethods.ReceiveMessage, message);
+    }
 
     [HubMethodName(nameof(HubMethods.JoinGroup))]
     public async Task JoinGroup()

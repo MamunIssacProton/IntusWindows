@@ -16,12 +16,18 @@ public class OrderHub: Hub
         await Clients.All.SendAsync("RecieveMessage", message);
     }
 
+    [HubMethodName(nameof(HubMethods.SendNotification))]
+    public async Task SendNotification( string message)
+    {
+        await Clients.User(Context.ConnectionId).SendAsync(HubMethods.ReceiveMessage, message);
+    }
 
     [HubMethodName(nameof(HubMethods.JoinGroup))]
     public async Task JoinGroup()
     {
 
         await Groups.AddToGroupAsync(Context.ConnectionId, HubGroups.Order);
+      
     }
 
 
@@ -32,7 +38,7 @@ public class OrderHub: Hub
     {
 
         await Clients.Group(HubGroups.Order).SendAsync("ReceiveMessage", operation, message);
-        Console.WriteLine("broadcasted msg on orderhub");
+       
     }
 
     [HubMethodName(nameof(LeaveGroup))]

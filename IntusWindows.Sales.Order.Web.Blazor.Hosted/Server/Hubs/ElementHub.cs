@@ -14,6 +14,11 @@ public class ElementHub:Hub
         await Clients.All.SendAsync("RecieveMessage", message);
     }
 
+    [HubMethodName(nameof(HubMethods.SendNotification))]
+    public async Task SendNotification(string message)
+    {
+        await Clients.User(Context.ConnectionId).SendAsync(HubMethods.ReceiveMessage, message);
+    }
 
     [HubMethodName(nameof(HubMethods.JoinGroup))]
     public async Task JoinGroup()

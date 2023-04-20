@@ -13,6 +13,7 @@ public static class HubGroups
 
     public static string Window = nameof(Window);
 
+    public static string DiagnosticCenter = nameof(DiagnosticCenter);
 
 }
 

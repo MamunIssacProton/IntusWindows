@@ -16,7 +16,7 @@ builder.Services.AddResponseCompression(opts =>
     opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
         new[] { "application/octet-stream" });
 });
-//builder.Services.AddScoped<IHubService, BaseHubService>();
+
 var app = builder.Build();
 app.UseResponseCompression();
 // Configure the HTTP request pipeline.

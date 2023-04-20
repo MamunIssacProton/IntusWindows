@@ -1,7 +1,4 @@
-﻿@using IntusWindows.Sales.Order.Web.Services.Interfaces
-@using IntusWindows.Sales.Contract.Models.Map
-@using IntusWindows.Sales.Contract.Utils
-@inject IDimensionService dimensionService
+﻿@inject IDimensionService dimensionService
 
 <button class="btn btn-primary" @onclick="() => dialog.Show()">Create new Dimension</button>
 <DialogBase @ref="dialog" Title="Create new Dimension">
@@ -35,8 +32,6 @@
                                                 dimension.Width, dimension.Height, dimension.Title));
                 dialog.CloseDialog();
             }
-
-           
           
         }
 

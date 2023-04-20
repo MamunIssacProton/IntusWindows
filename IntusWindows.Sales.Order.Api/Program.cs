@@ -1,5 +1,8 @@
 using IntusWindows.Sales.Order.Api.ApplicationServices;
 using IntusWindows.Sales.Order.Infrastructure.ExtensionMethods;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -13,22 +16,24 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: "webapp",
                      policy => policy.AllowAnyOrigin()
                                      .AllowAnyHeader()
-                                     .AllowAnyMethod()
-            ); ;
+                                     .AllowAnyMethod());;
 });
 
+builder.Services.AddHealthChecks().AddNpgSql(builder.Configuration.GetConnectionString("postgres"));
 var app = builder.Build();
 app.UseCors("webapp");
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.MapHealthChecks("/api/health", new HealthCheckOptions
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
+
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();

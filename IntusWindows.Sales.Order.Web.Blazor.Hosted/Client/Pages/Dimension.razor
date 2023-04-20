@@ -1,20 +1,24 @@
 ﻿@page "/dimension"
 @inject IDimensionService dimensionService
 @inject NavigationManager Navigation
-@implements IDisposable
+@implements IAsyncDisposable
 
 <IntusWindows.Sales.Order.Web.Blazor.Hosted.Client.Components.Dimension.CreateDimensionComponent hubConnection="hubConnection">
 
 </IntusWindows.Sales.Order.Web.Blazor.Hosted.Client.Components.Dimension.CreateDimensionComponent>
+<Notification Message="@message" IsVisible="hasNotification"></Notification>
 <DataTableBase T="DimensionDTO" Data="dimensions"></DataTableBase>
 
 @code {
     private DialogBase dialog;
     List<DimensionDTO> dimensions { get; set; } = new List<DimensionDTO>();
     private HubConnection? hubConnection;
+    bool hasNotification { get; set; }
+    string? message { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
+
         hubConnection = new HubConnectionBuilder()
        .WithUrl(Navigation.ToAbsoluteUri($"/hub/{HubGroups.Dimension}"))
        .Build();
@@ -53,17 +57,26 @@
 
         });
 
+        hubConnection.On<string>(HubMethods.ReceiveMessage, (Notification) =>
+        {
+            this.message = Notification;
+            hasNotification = true;
+            StateHasChanged();
+        });
 
         dimensions.Clear();
         dimensions.AddRange(await dimensionService.GetAllDimensionsListAsync());
     }
 
-
-    public void Dispose()
+  
+    public async ValueTask DisposeAsync()
     {
-       
-        Console.WriteLine("unregistering the update");
+        if (hubConnection != null)
+        {
+            await hubConnection.DisposeAsync();
+
+        }
 
     }
-}
+    }
 

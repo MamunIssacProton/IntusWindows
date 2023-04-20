@@ -17,5 +17,7 @@ public static class HubMethods
 
 	public static string ReceiveMessage = nameof(ReceiveMessage);
 
+	public static string SendNotification = nameof(SendNotification);
+
 }
 

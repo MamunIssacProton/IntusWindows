@@ -15,10 +15,12 @@ public static class DIExtensions
 			endpoint.MapHub<DimensionHub>($"/hub/{HubGroups.Dimension}");
 			endpoint.MapHub<ElementHub>($"/hub/{HubGroups.Element}");
 			endpoint.MapHub<OrderHub>($"/hub/{HubGroups.Order}");
-
+			endpoint.MapHub<HealthHub>($"/{HubGroups.DiagnosticCenter}");
         });
 
 		return app;
 	}
+
+
 }
 
