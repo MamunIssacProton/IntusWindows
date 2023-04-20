@@ -7,6 +7,8 @@
 
 ### 99.5% pure .net framework used, no 3rd party library used for this project except healthcheck implementation
 
+#### projects are implented to follow `Domain Driven Design` process, `CQRS  `architectural pattern,`SOLID Principles` development guideline
+
 ## Database Used
 
 1. Postgresql (for faster write operation)
