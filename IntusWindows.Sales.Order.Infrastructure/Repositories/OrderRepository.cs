@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using IntusWindows.Sales.Contract.DTOs;
 using IntusWindows.Sales.Contract.Models;
 using IntusWindows.Sales.Contract.Models.Map;
@@ -8,6 +9,7 @@ using IntusWindows.Sales.Order.Domain.Enums;
 using IntusWindows.Sales.Order.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 
+[assembly: InternalsVisibleTo("IntusWindows.Sales.Order.Api")]
 namespace IntusWindows.Sales.Order.Infrastructure.Repositories;
 
 public sealed class OrderRepository : BaseContextRepository, IOrderRepository

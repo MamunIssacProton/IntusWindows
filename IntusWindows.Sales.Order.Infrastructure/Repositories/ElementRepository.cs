@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 using IntusWindows.Sales.Contract.DTOs;
 using IntusWindows.Sales.Order.Domain.Entities;
 using IntusWindows.Sales.Order.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
+
+[assembly: InternalsVisibleTo("IntusWindows.Sales.Order.Api")]
 
 namespace IntusWindows.Sales.Order.Infrastructure.Repositories;
 

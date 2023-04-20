@@ -24,8 +24,8 @@ var app = builder.Build();
 app.UseCors("webapp");
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+   // app.UseSwagger();
+    //app.UseSwaggerUI();
 }
 app.MapHealthChecks("/api/health", new HealthCheckOptions
 {

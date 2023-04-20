@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using IntusWindows.Sales.Contract.DTOs;
 using IntusWindows.Sales.Order.Domain.Entities;
 using IntusWindows.Sales.Order.Domain.Exceptions;
@@ -6,6 +7,7 @@ using IntusWindows.Sales.Order.Domain.ValueObjects;
 using IntusWindows.Sales.Order.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
+[assembly: InternalsVisibleTo("IntusWindows.Sales.Order.Api")]
 namespace IntusWindows.Sales.Order.Infrastructure.Repositories;
 
 public sealed class StateRepository:BaseContextRepository, IStateRepository

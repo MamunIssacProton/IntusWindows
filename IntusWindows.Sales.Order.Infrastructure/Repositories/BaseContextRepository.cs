@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 using IntusWindows.Sales.Order.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
+[assembly: InternalsVisibleTo("IntusWindows.Sales.Order.Api")]
 namespace IntusWindows.Sales.Order.Infrastructure.Repositories;
 
 public class BaseContextRepository : IBaseContextRepository
