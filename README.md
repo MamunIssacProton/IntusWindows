@@ -123,3 +123,11 @@ you can find this contrains with validation logics on
 3. ### `showing validation errors in a list`
 
 ### The SwaggerUI has disabled on `IntusWindows.Sales.Order.Api` project. you can enable it by just removing the comments on line `27,28` in `program.cs` file
+
+### `Context menu`
+
+![alt text](context_menu.png)
+
+### `Run Multiple Configuration`
+
+![alt text](run_configuration.png)
