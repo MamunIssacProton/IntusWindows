@@ -7,7 +7,14 @@
 
 </IntusWindows.Sales.Order.Web.Blazor.Hosted.Client.Components.Dimension.CreateDimensionComponent>
 <Notification Message="@message" IsVisible="hasNotification"></Notification>
-<DataTableBase T="DimensionDTO" Data="dimensions"></DataTableBase>
+@if (dimensions.Any())
+{
+    <DataTableBase T="DimensionDTO" Data="dimensions"></DataTableBase>
+}
+else
+{
+    <EmptyListTemplate Message="Loading... no dimension has found yet!"></EmptyListTemplate>
+}
 
 @code {
     private DialogBase dialog;
@@ -68,7 +75,7 @@
         dimensions.AddRange(await dimensionService.GetAllDimensionsListAsync());
     }
 
-  
+
     public async ValueTask DisposeAsync()
     {
         if (hubConnection != null)
@@ -78,5 +85,5 @@
         }
 
     }
-    }
+}
 

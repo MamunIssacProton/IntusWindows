@@ -1,6 +1,6 @@
 ﻿@page "/element"
 @inject IElementService elementService;
-@implements IDisposable;
+@implements IAsyncDisposable;
 @inject ProgressService progressService;
 @inject NavigationManager Navigation
 
@@ -8,9 +8,16 @@
 <IntusWindows.Sales.Order.Web.Blazor.Hosted.Client.Components.Element.CreateElementComponent hubConnection="hubConnection">
 
 </IntusWindows.Sales.Order.Web.Blazor.Hosted.Client.Components.Element.CreateElementComponent>
+@if (Elements.Any())
+    {
 <IntusWindows.Sales.Order.Web.Blazor.Hosted.Client.Components.DataTableBase T="ElementDTO" Data="Elements" Title="Available Elements">
 
 </IntusWindows.Sales.Order.Web.Blazor.Hosted.Client.Components.DataTableBase>
+    }
+    else
+    {
+        <EmptyListTemplate Message="Loading...No element has found yet!"></EmptyListTemplate>
+    }
 
 @code {
 
@@ -74,8 +81,14 @@
         StateHasChanged();
     }
 
-    public void Dispose() =>
-          progressService.ProgressChanged -= OnProgressChanged;
+    public async ValueTask DisposeAsync()
+    {
+        if (hubConnection != null)
+        {
+            await hubConnection.DisposeAsync();
 
+        }
+        progressService.ProgressChanged += OnProgressChanged;
+    }
 }
 

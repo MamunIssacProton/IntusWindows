@@ -8,8 +8,7 @@
 @using IntusWindows.Sales.Contract.Utils
 @implements IDisposable;
 @inject ProgressService progressService;
-<h6>Progress : @Progress</h6>
-<h5>Msg @msg</h5>
+
 <button class="btn btn-primary" @onclick="() => dialog.Show()">Create New Element</button>
 <DialogBase @ref="dialog" Title="Create new element" OnSave="OnSave" CreateButtonText="Save" IsSave="true">
 
@@ -28,7 +27,7 @@
 
 
 </DialogBase>
-
+<Notification IsVisible="ShowNotification" Message="@message"></Notification>
 
 
 @code
@@ -36,8 +35,8 @@
 {
     private DialogBase dialog;
     long Progress;
-    string msg;
-
+    string message;
+    bool ShowNotification { get; set; } = false;
     [Parameter]
     public HubConnection? hubConnection { get; set; }
 
@@ -62,9 +61,22 @@
 
     async Task OnSave()
     {
-        msg = "On Save "+Element.DimensionId;
+
         Element.Id = Guid.NewGuid();
-        ValidatorFactory.Validate(Element);
+        try
+        {
+            ValidatorFactory.Validate(Element);
+        }
+        catch (Exception ex)
+        {
+            message = ex.Message;
+            ShowNotification = true;
+            StateHasChanged();
+            await Task.Delay(TimeSpan.FromSeconds(3.5));
+            ShowNotification = false;
+            StateHasChanged();
+        }
+
         Progress = 0;
         var res= await elementService.CreateElement(Element);
         if (res.Ok && hubConnection != null)

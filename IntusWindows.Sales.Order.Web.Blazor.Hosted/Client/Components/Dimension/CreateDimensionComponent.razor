@@ -4,37 +4,45 @@
 <DialogBase @ref="dialog" Title="Create new Dimension">
     <FormBase T="Mapper.Dimension" HasDimensions="true" OnModelCreate="OnDimensionCreated" SaveButtonText="Create Dimension"></FormBase>
 </DialogBase>
-<label>@message</label>
-
+<Notification IsVisible="ShowNotification" Message="@message"></Notification>
 
 @code {
     private DialogBase dialog;
-        string message;
-        [Parameter]
-        public HubConnection? hubConnection { get; set; }
+    string message;
+    bool ShowNotification { get; set; } = false;
+    [Parameter]
+    public HubConnection? hubConnection { get; set; }
 
-        async Task OnDimensionCreated(Mapper.Dimension dimension)
+    async Task OnDimensionCreated(Mapper.Dimension dimension)
+    {
+        try
         {
-
             ValidatorFactory.Validate(dimension);
 
-            var response = await dimensionService.SaveDimensionAsync(new Mapper.Dimension(){
-                Title= dimension.Title,
-                Height= dimension.Height,
-                Width= dimension.Width,
-                ElementType= dimension.ElementType });
+        }
+        catch (Exception ex)
+        {
+            message = ex.Message;
+            ShowNotification = true;
+            StateHasChanged();
+            await Task.Delay(TimeSpan.FromSeconds(3.5));
+            ShowNotification = false;
+            StateHasChanged();
 
-            var res = await dimensionService.SaveDimensionAsync(dimension);
-            if (res.Ok && hubConnection != null)
-            {
-                await hubConnection.InvokeAsync(HubMethods.BroadcastToGroup, HubOperations.Created,
-                                                new DimensionDTO($"{dimension.ElementType.ToString()}-{dimension.Width} X {dimension.Height}",
-                                                dimension.Width, dimension.Height, dimension.Title));
-                dialog.CloseDialog();
-            }
-          
         }
 
 
+        var res = await dimensionService.SaveDimensionAsync(dimension);
+        if (res.Ok && hubConnection != null)
+        {
+            await hubConnection.InvokeAsync(HubMethods.BroadcastToGroup, HubOperations.Created,
+                                            new DimensionDTO($"{dimension.ElementType.ToString()}-{dimension.Width} X {dimension.Height}",
+                                            dimension.Width, dimension.Height, dimension.Title));
+            dialog.CloseDialog();
+        }
+
     }
+
+
+}
 

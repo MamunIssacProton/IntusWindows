@@ -1,7 +1,7 @@
 ﻿@page "/order"
 @inject NavigationManager Navigation
 @inject ProgressService progressService;
-@implements IDisposable;
+@implements IAsyncDisposable;
 @inject IOrderService orderService;
 @inject IWindowService windowsService;
 @inject IStateService stateService;
@@ -33,8 +33,14 @@
 
     </div>
 </DialogBase>
-<DataTableBase Title="Orders" T="OrderDTO" Data="orders" OnItemSelected="(e)=>onSelectedOrder(e as OrderDTO)" OnContextMenuSelected="(e)=>SelectedContextMenu(e as ContextMenuItem)" ShowContextMenu="true" contextMenuItems="contextMenuItems"></DataTableBase>
-
+@if (orders.Any())
+{
+    <DataTableBase Title="Orders" T="OrderDTO" Data="orders" OnItemSelected="(e) => onSelectedOrder(e as OrderDTO)" OnContextMenuSelected="(e) => SelectedContextMenu(e as ContextMenuItem)" ShowContextMenu="true" contextMenuItems="contextMenuItems"></DataTableBase>
+}
+else
+{
+    <EmptyListTemplate Message="Loading...No order has found yet!"></EmptyListTemplate>
+}
 <DialogBase @ref="dialogOrderDetails" Title="Order Details" CancelButtonText="Ok">
     @if (selectedOrder != null)
     {

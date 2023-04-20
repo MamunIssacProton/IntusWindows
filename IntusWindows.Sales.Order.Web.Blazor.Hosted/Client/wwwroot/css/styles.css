@@ -180,14 +180,14 @@
     position: fixed;
     bottom: 10px;
     right: 10px;
-    z-index: 9999;
+    z-index: 999;
     padding: 15px;
     border-radius: 10px;
     font-size: 18px;
     color: #ffffff;
     background-color: #dc3545;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-    animation: slide-in 0.5s forwards, slide-out 0.5s forwards 3s;
+    animation: slide-in 0.5s forwards, slide-out 0.5s forwards;
 }
 
 @keyframes slide-in {
@@ -198,6 +198,7 @@
     to {
         transform: translateY(0%);
     }
+    animation-fill-mode: forwards;
 }
 
 @keyframes slide-out {
@@ -208,6 +209,7 @@
     to {
         transform: translateY(100%);
     }
+    animation-fill-mode: forwards;
 }
 
 /* Table style */

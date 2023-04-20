@@ -3,7 +3,7 @@
 
 @inject ProgressService progressService;
 @inject NavigationManager Navigation
-@implements IDisposable;
+@implements IAsyncDisposable;
 <h5>Progress : @Progress</h5>
 <label>@Messgae</label>
 <button class="btn btn-primary" @onclick="() => dialog.Show()">Create new State</button>
@@ -11,7 +11,14 @@
     <FormBase T="Mapper.State" OnModelCreate="OnSateCreated" SaveButtonText="Create" SkipProperty="Id"></FormBase>
 
 </DialogBase>
-<DataTableBase T="StateDTO" Data="States"></DataTableBase>
+@if (States.Any())
+{
+    <DataTableBase T="StateDTO" Data="States"></DataTableBase>
+}
+else
+{
+    <EmptyListTemplate Message="Laoding...Not State has found yet!"></EmptyListTemplate>
+}
 @code {
 
     public List<StateDTO> States { get; set; } = new List<StateDTO>();
@@ -77,12 +84,14 @@
         StateHasChanged();
     }
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
-        progressService.ProgressChanged -= OnProgressChanged;
+        if (hubConnection != null)
+        {
+            await hubConnection.DisposeAsync();
 
-        Console.WriteLine("unregistering the update");
-
+        }
+        progressService.ProgressChanged += OnProgressChanged;
     }
 
     public async void OnSateCreated(Mapper.State state)
@@ -97,6 +106,7 @@
 
         }
         dialog.CloseDialog();
+
         StateHasChanged();
     }
 

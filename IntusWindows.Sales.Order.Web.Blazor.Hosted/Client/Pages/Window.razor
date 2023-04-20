@@ -1,12 +1,21 @@
 ﻿@page "/window"
 @inject IWindowService windowService
 @inject NavigationManager Navigation
-
+@implements IAsyncDisposable
 
 <IntusWindows.Sales.Order.Web.Blazor.Hosted.Client.Components.Window.CreateWindowComponent connection="hubConnection">
 
 </IntusWindows.Sales.Order.Web.Blazor.Hosted.Client.Components.Window.CreateWindowComponent>
-<DataTableBase Data="Windows" T="WindowDTO" Title="Available Windows"></DataTableBase>
+@if (Windows.Any())
+{
+    <DataTableBase Data="Windows" T="WindowDTO" Title="Available Windows"></DataTableBase>
+
+}
+else
+{
+    <EmptyListTemplate Message="Loading...No windows has found yet"></EmptyListTemplate>
+}
+
 
 @code {
 
@@ -47,7 +56,7 @@
                     break;
 
                 case HubOperations.Updated:
-                    var index = this.Windows.FindIndex(x=>x.Id==window.Id);
+                    var index = this.Windows.FindIndex(x => x.Id == window.Id);
                     if (index != -1)
                     {
                         this.Windows[index] = window;
@@ -68,7 +77,14 @@
     public bool IsConnected =>
     hubConnection?.State == HubConnectionState.Connected;
 
+    public async ValueTask DisposeAsync()
+    {
+        if (hubConnection != null)
+        {
+            await hubConnection.DisposeAsync();
 
+        }
+    }
 }
 
 

@@ -451,6 +451,17 @@ namespace IntusWindows.Sales.Order.Web.Blazor.Hosted.Client.Pages
             await hubConnection.InvokeAsync(HubMethods.BroadcastToGroup, operation, updatedOrder);
          
         }
+
+
+        public async ValueTask DisposeAsync()
+        {
+            if (hubConnection != null)
+            {
+                await hubConnection.DisposeAsync();
+
+            }
+           
+        }
     }
 
 }

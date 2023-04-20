@@ -13,9 +13,18 @@ a, .btn-link {
 }
 
 .btn-primary {
-    color: #fff;
+    /*    color:blueviolet;
+
     background-color: #1b6ec2;
-    border-color: #1861ac;
+    border-color: #1861ac;*/
+
+    background-color: transparent;
+    border: 2px solid deepskyblue;
+    color: #000;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
