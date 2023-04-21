@@ -19,9 +19,14 @@ public sealed class ElementRepository : BaseContextRepository, IElementRepositor
 
     }
 
-    public ValueTask<ApiResultDTO> DeleteElementAsync(Guid id)
+    public async ValueTask<ApiResultDTO> DeleteElementAsync(Guid id)
     {
-        throw new NotImplementedException();
+        var element = await context.Elements.FirstOrDefaultAsync(x => x.Id == id);
+        if (element == null)
+            return new ApiResultDTO(false, $"No element has found with id {id}");
+        context.Elements.Remove(element);
+        await context.SaveChangesAsync();
+        return new ApiResultDTO(true, $"{element.elementName} has successfully deleted");
     }
 
     public async ValueTask<IReadOnlyList<ElementDTO>> GetElementsListAsync()
@@ -42,10 +47,10 @@ public sealed class ElementRepository : BaseContextRepository, IElementRepositor
     public async ValueTask<Element?> GetElementByIdAsync(Guid id)
     {
         var data = await context.Elements.AsNoTracking().Include(x => x.dimension).FirstOrDefaultAsync(x=>x.Id==id);
-        //Console.WriteLine($"got data : {data.Id}");
+    
         if (data != null)
             return data;
-        //return new ElementDTO(null,null,null,null);
+        
         return null;
     }
 
@@ -63,7 +68,7 @@ public sealed class ElementRepository : BaseContextRepository, IElementRepositor
                                              dimensionId=x.dimension.Id
                                          }).FirstOrDefaultAsync();
                                          
-        //Console.WriteLine($"got data : {data.Id}");
+        
         if (data != null)
             return new ElementDTO(data.id, data.name, data.width, data.height,data.dimensionId);
 

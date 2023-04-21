@@ -18,6 +18,8 @@ public sealed class WindowRepository : BaseContextRepository, IWindowRepository
 
     public async ValueTask<ApiResultDTO> AddWindow(Window window)
     {
+        if (string.IsNullOrEmpty(window?.windowName?.Value))
+            return new ApiResultDTO(false,"window name cannot be empty");
         await context.Windows.AddAsync(window);
         await context.SaveChangesAsync();
         return new ApiResultDTO(true, window.Id.ToString());
@@ -37,7 +39,7 @@ public sealed class WindowRepository : BaseContextRepository, IWindowRepository
 
     public async ValueTask<Window> GetWindowByIdAsync(Guid id)
     {
-        var window = await context.Windows.Where(x => x.Id == id).FirstOrDefaultAsync();
+        var window = await context.Windows.FirstOrDefaultAsync(x=>x.Id==id);
         if (window is null)
             throw new NotFoundException($"no window has found with id {id}");
         return window;

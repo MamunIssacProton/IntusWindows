@@ -18,7 +18,7 @@ public sealed class StateRepository:BaseContextRepository, IStateRepository
 
     public async ValueTask<ApiResultDTO> ChangeStateNameAsync(State state)
     {
-        var result = await context.States.SingleOrDefaultAsync(x=>x.Id==state.Id);
+        var result = await context.States.FindAsync(state.Id);
         if (result is null)
             throw new NotFoundException($"no state has found with id : {state.Id}");
 
@@ -29,18 +29,28 @@ public sealed class StateRepository:BaseContextRepository, IStateRepository
 
 
     public async ValueTask<ApiResultDTO> CreateNewStateAsync(State state)
+{
+    if (string.IsNullOrEmpty(state?.Name?.Value))
+        return new ApiResultDTO(false, "State name cannot be null or empty.");
 
+    await context.States.AddAsync(state);
+
+    try
     {
-        await context.States.AddAsync(state);
-        await context.SaveChangesAsync();
-        return new ApiResultDTO(true,$"{state.Name.Value} saved successfully");
+        await context.SaveChangesAsync(CancellationToken.None);
+        return new ApiResultDTO(true, $"{state.Name.Value} saved successfully");
     }
+    catch (Exception ex)
+    {
+        return new ApiResultDTO(false, $"Something went wrong while saving the state: {ex.Message}");
+    }
+}
+
 
     public async ValueTask<IReadOnlyList<StateDTO>> GetAllStatesListAsync()
     {
         var states=  await context.States.AsNoTracking().Select(x=>new StateDTO(x.Id,x.Name)).ToListAsync();
-        if (states is null)
-            throw new NotFoundException("No state has found");
+      
         return states.AsReadOnly();
     }
 

@@ -20,7 +20,7 @@ public sealed class DimensionRepository : BaseContextRepository, IDimensionRepos
     {
         return await context.Dimensions.AsNoTracking().Select(x=>new DimensionDTO(x.Id,x.Width,x.Height,x.Title)).ToListAsync();
     }
-
+    
     public async ValueTask<ApiResultDTO> SaveDimensionAsync(Dimension dimension)
     {
         await context.Dimensions.AddAsync(dimension);
@@ -30,18 +30,18 @@ public sealed class DimensionRepository : BaseContextRepository, IDimensionRepos
 
     public async ValueTask<Dimension?> GetDimensionByIdAsync(string id)
     {
-        var dimension = await context.Dimensions.Where(x => x.Id == id).FirstOrDefaultAsync();
+        var dimension = await context.Dimensions.FirstOrDefaultAsync(x=>x.Id==id);
         if (dimension != null)
             return dimension;
-
+        
         return null;
     }
 
     public async ValueTask<ApiResultDTO> UpdateDimensionAsync(string id, decimal height, decimal width, string title)
     {
-        var dimension = await context.Dimensions.Where(x => x.Id == id).FirstOrDefaultAsync();
+        var dimension = await context.Dimensions.FirstOrDefaultAsync(x=>x.Id==id);
         if (dimension is null)
-            throw new Exception($"No dimension has found with id : {id}");
+            throw new Exception($"No dimension was found with ID: {id} in the {nameof(UpdateDimensionAsync)} method.");
 
         if (dimension.Height != height)
         {

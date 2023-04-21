@@ -20,46 +20,53 @@ public sealed class OrderRepository : BaseContextRepository, IOrderRepository
 
     public async ValueTask<ApiResultDTO> ChangeDimensionsFromOrderByIdAsync(List<Mapper.ChangeDimensionFormOrder> orders)
     {
-        foreach (var Order in orders)
+        try
         {
+            foreach (var Order in orders)
+            {
+                Domain.Entities.Order order = await context.Orders
+                    .Include(x => x.Windows)
+                    .ThenInclude(x => x.SubElements)
+                    .ThenInclude(x => x.dimension)
+                    .SingleOrDefaultAsync(x => x.Id == Order.OrderId);
 
-            Domain.Entities.Order order = await context.Orders.Include(x => x.Windows)
-                                                          .ThenInclude(x => x.SubElements)
-                                                          .ThenInclude(x => x.dimension)
-                                                          .Where(x => x.Id == Order.OrderId)
-                                                          .SingleOrDefaultAsync();
+                if (order is null)
+                {
+                    return new ApiResultDTO(false, $"No order has found with id {Order.OrderId}");
+                }
 
+                var dimension = await context.Dimensions
+                    .SingleOrDefaultAsync(x => x.Id == Order.NewDimensionId);
 
+                if (dimension is null)
+                {
+                    return new ApiResultDTO(false, $"No dimension has found with id : {Order.NewDimensionId}");
+                }
 
+                Domain.Entities.Element element = order.Windows
+                    .Where(x => x.Id == Order.WindowId)
+                    .FirstOrDefault()
+                    ?.SubElements
+                    .FirstOrDefault(x => x.dimension.Id == Order.CurrentDimensionId);
 
+                if (element is null)
+                {
+                    return new ApiResultDTO(false, $"No element has found which contains dimension id {Order.CurrentDimensionId}");
+                }
 
-            if (order is null)
-                return new ApiResultDTO(false, $"no order has found with id {Order.OrderId}");
+                element.ChangeDimension(dimension);
+            }
 
+            await context.SaveChangesAsync();
 
-            var dimension = await context.Dimensions.SingleOrDefaultAsync(x=>x.Id==Order.NewDimensionId);
-            if (dimension is null)
-                return new ApiResultDTO(false, $"no dimension has found with id : {Order.NewDimensionId}");
-
-
-            Domain.Entities.Element element = order.Windows.Where(x => x.Id == Order.WindowId)
-                                           .FirstOrDefault().SubElements
-                                           .FirstOrDefault(x => x.dimension.Id == Order.CurrentDimensionId);
-
-
-            if (element is null)
-                return new ApiResultDTO(false, $"no element has found which contains dimension id {Order.CurrentDimensionId}");
-            element.ChangeDimension(dimension);
-
-
-            context.Orders.Update(order);
-
+            return new ApiResultDTO(true, $"Dimension successfully updated");
         }
-
-  
-        await context.SaveChangesAsync();
-        return new ApiResultDTO(true, $"dimension successfully updated");
+        catch (Exception ex)
+        {
+            return new ApiResultDTO(false, $"An error occurred while updating the dimensions: {ex.Message}");
+        }
     }
+
 
     public async ValueTask<ApiResultDTO> ChangeOrderNameByIdAsync(Guid orderId, string orderName)
     {
@@ -78,11 +85,11 @@ public sealed class OrderRepository : BaseContextRepository, IOrderRepository
 
     public async ValueTask<ApiResultDTO> ChangeStateInOrderByIdAsync(Guid orderId, Guid desiredStateId)
     {
-        var order = await context.Orders.Where(x => x.Id == orderId).SingleOrDefaultAsync();
+        var order = await context.Orders.FindAsync(orderId);
         if (order is null)
             return new ApiResultDTO(false, "No order has found");
 
-        var state = await context.States.Where(x => x.Id == desiredStateId).SingleOrDefaultAsync();
+        var state = await context.States.SingleOrDefaultAsync(x => x.Id == desiredStateId);
         if (state is null)
             return new ApiResultDTO(false, "no state has found");
         order.State = state.Name;
@@ -94,6 +101,8 @@ public sealed class OrderRepository : BaseContextRepository, IOrderRepository
 
     public async ValueTask<ApiResultDTO> CreateNewOrderAsync(Domain.Entities.Order order)
     {
+        if (order == null)
+            return new ApiResultDTO(false, "Order cannot be null or empty");
         await context.Orders.AddAsync(order);
 
         await context.SaveChangesAsync();
@@ -106,10 +115,12 @@ public sealed class OrderRepository : BaseContextRepository, IOrderRepository
                                         .ThenInclude(x => x.SubElements)
                                         .ThenInclude(x => x.dimension)
                                         .SingleOrDefaultAsync(x=>x.Id==orderId);
-       // using var tr = await context.Database.BeginTransactionAsync();
+       
 
         if (order is null)
             return new ApiResultDTO(false, $"no order has found with id : {orderId}");
+
+        using var tr = await context.Database.BeginTransactionAsync();
 
         var windows = order.Windows.ToDictionary(x => x.Id);
 
@@ -135,20 +146,24 @@ public sealed class OrderRepository : BaseContextRepository, IOrderRepository
 
         if (errorElements.Any())
             return new ApiResultDTO(false, $"Failed to remove elements with ids: {string.Join(",", errorElements)}");
-
-        await context.SaveChangesAsync();
-
-        if (removedElements.Any())
+        try
         {
-            return new ApiResultDTO(true, $"Elements have been successfully removed from order {orderId}: {string.Join(",", removedElements)}");
+            await context.SaveChangesAsync();
+            await tr.CommitAsync();
+            if (removedElements.Any())
+            {
+                return new ApiResultDTO(true, $"Elements have been successfully removed from order {orderId}: {string.Join(",", removedElements)}");
+            }
+            else
+            {
+                return new ApiResultDTO(false, $"No elements have been removed from order {orderId}");
+            }
         }
-        else
+        catch (Exception ex)
         {
-            return new ApiResultDTO(false, $"No elements have been removed from order {orderId}");
+            await tr.RollbackAsync();
+            return new ApiResultDTO(false,$"Something went wrong while deleting deleting elements from order.");
         }
-
-        //await context.SaveChangesAsync();
-
        
     }
 
@@ -158,9 +173,17 @@ public sealed class OrderRepository : BaseContextRepository, IOrderRepository
         if (order is null)
             return new ApiResultDTO(false, $"no order has found with id : {orderId}");
         context.Orders.Remove(order);
-
-        await context.SaveChangesAsync();
-        return new ApiResultDTO(true, $"sucessfully deleted order-{order.Id}");
+        try
+        {
+            await context.SaveChangesAsync();
+            return new ApiResultDTO(true, $"sucessfully deleted order-{order.Id}");
+        }
+        catch (Exception ex)
+        {
+            return new ApiResultDTO(false, $"something went wrong while deleting the order,{ex.Message}");
+        }
+        
+        
     }
 
 
@@ -175,12 +198,26 @@ public sealed class OrderRepository : BaseContextRepository, IOrderRepository
         if (order is null)
             return new ApiResultDTO(false, $"no order has found with id : {orderId}");
 
-        var window = order.Windows.RemoveAll(x => windowIds.Contains(x.Id));
-
+        var removedWindows = new List<Guid>();
+        foreach (var window in order.Windows)
+        {
+            if (windowIds.Contains(window.Id))
+            {
+                context.Windows.Remove(window);
+                removedWindows.Add(window.Id);
+            }
+        }
 
         await context.SaveChangesAsync();
 
-        return new ApiResultDTO(true, $"successfully removed windows from order");
+        if (removedWindows.Any())
+        {
+            return new ApiResultDTO(true, $"Successfully removed windows {string.Join(",", removedWindows)} from order {orderId}");
+        }
+        else
+        {
+            return new ApiResultDTO(false, $"No windows have been removed from order {orderId}");
+        }
     }
 
     public async ValueTask<OrderDTO> GetOrderByIdAsync(Guid orderId)
@@ -216,8 +253,8 @@ public sealed class OrderRepository : BaseContextRepository, IOrderRepository
                                            w.SubElements.Select(se => new ElementDTO(se.Id, se.elementName, se.dimension.Width, se.dimension.Height, se.dimension.Id))
                                             .ToList()))
                                             .ToList()))
-                                   .ToList();
-
+                                   .ToList().AsReadOnly();
+        
     }
 }
 
