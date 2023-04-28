@@ -1,11 +1,12 @@
 ﻿using System;
 namespace IntusWindows.Sales.Order.Maui.ViewModels;
 
-public class BaseViewModel:INotifyPropertyChanged
+public class BaseViewModel : INotifyPropertyChanged
 {
-	public BaseViewModel()
-	{
-	}
+    public BaseViewModel()
+    {
+
+    }
 
     public event PropertyChangedEventHandler PropertyChanged;
 
@@ -23,6 +24,14 @@ public class BaseViewModel:INotifyPropertyChanged
             return true;
         }
         return false;
+    }
+
+    private bool _isRunning;
+
+    public bool IsRunning
+    {
+        get { return _isRunning; }
+        set { Set(ref _isRunning, value); }
     }
 }
 

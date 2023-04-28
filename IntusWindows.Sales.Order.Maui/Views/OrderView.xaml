@@ -3,35 +3,73 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="IntusWindows.Sales.Order.Maui.Views.OrderView"
              xmlns:vm="clr-namespace:IntusWindows.Sales.Order.Maui.ViewModels"
-             Title="OrderView">
+             Title="Orders">
     <ContentPage.BindingContext>
         <vm:OrderViewModel></vm:OrderViewModel>
 
     </ContentPage.BindingContext>
 
-    <VerticalStackLayout>
-        <Label  >
-            <Label.FormattedText>
-                <FormattedString>
-                    <Span Text="Status"></Span>
-                   
-                </FormattedString>
+    <VerticalStackLayout Spacing="20">
+        <Grid ColumnDefinitions="*,*" ColumnSpacing="20">
+            <Label Text="Order Name" FontSize="Subtitle" Grid.Column="0"></Label>
+            <Label Text="State" FontSize="Subtitle" Grid.Column="1"></Label>
+        </Grid>
+        <CollectionView ItemsSource="{Binding orders}">
+            <CollectionView.EmptyView>
+                <DataTemplate>
+                    <HorizontalStackLayout>
+                        <Label>No Order has found</Label>
 
-            </Label.FormattedText>
-        </Label>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-        <Label >
-            <Label.FormattedText>
-                <FormattedString>
-                    <Span Text="ID : "></Span>
-                  
-                </FormattedString>
+                    </HorizontalStackLayout>
 
-            </Label.FormattedText>
+                </DataTemplate>
 
-        </Label>
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+
+                    <Grid ColumnSpacing="20" RowDefinitions="40" ColumnDefinitions="*,*">
+
+                        <Label Grid.Row="0" Grid.Column="0">
+                            <Label.FormattedText>
+                                <FormattedString>
+
+                                    <Span Text="{Binding OrderName}" FontSize="Medium"></Span>
+                                </FormattedString>
+
+                            </Label.FormattedText>
+
+                        </Label>
+
+                        <Label Grid.Row="0" Grid.Column="1">
+                            <Label.FormattedText>
+                                <FormattedString>
+
+                                    <Span Text="{Binding State}" FontSize="Medium"></Span>
+                                </FormattedString>
+
+                            </Label.FormattedText>
+
+                        </Label>
+
+                        <SwipeView Grid.Row="1" Grid.ColumnSpan="2">
+                            <SwipeView.RightItems>
+                                <SwipeItems>
+                                    <SwipeItem Text="Delete" BackgroundColor="Red" />
+                                    <SwipeItem Text="Details" BackgroundColor="DarkViolet" />
+                                  
+                                </SwipeItems>
+                            </SwipeView.RightItems>
+                        
+                        </SwipeView>
+                    </Grid>
+
+
+                </DataTemplate>
+
+            </CollectionView.ItemTemplate>
+
+
+        </CollectionView>
     </VerticalStackLayout>
 </ContentPage>
