@@ -28,6 +28,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntusWindows.Sales.Order.We
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntusWindows.Sales.Order.Web.Blazor.Hosted.Client", "IntusWindows.Sales.Order.Web.Blazor.Hosted\Client\IntusWindows.Sales.Order.Web.Blazor.Hosted.Client.csproj", "{940E1FCC-D6FB-4A32-BF59-78BEB8D03593}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntusWindows.Sales.Order.Maui", "IntusWindows.Sales.Order.Maui\IntusWindows.Sales.Order.Maui.csproj", "{369C68F6-7010-4F36-BCFF-C743DF598FA2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -70,6 +72,10 @@ Global
 		{940E1FCC-D6FB-4A32-BF59-78BEB8D03593}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{940E1FCC-D6FB-4A32-BF59-78BEB8D03593}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{940E1FCC-D6FB-4A32-BF59-78BEB8D03593}.Release|Any CPU.Build.0 = Release|Any CPU
+		{369C68F6-7010-4F36-BCFF-C743DF598FA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{369C68F6-7010-4F36-BCFF-C743DF598FA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{369C68F6-7010-4F36-BCFF-C743DF598FA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{369C68F6-7010-4F36-BCFF-C743DF598FA2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -82,6 +88,7 @@ Global
 		{CF0B3B82-BE4A-49B5-9ED2-9B28A014DAB5} = {FE862DBF-814F-4238-BAB9-745A093D84AE}
 		{E00609CA-56BF-44C9-8B0E-2C306187BD14} = {FE862DBF-814F-4238-BAB9-745A093D84AE}
 		{940E1FCC-D6FB-4A32-BF59-78BEB8D03593} = {FE862DBF-814F-4238-BAB9-745A093D84AE}
+		{369C68F6-7010-4F36-BCFF-C743DF598FA2} = {FE862DBF-814F-4238-BAB9-745A093D84AE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {92C4EBA7-4ED2-4A1F-88CC-F158A56DBBCA}
