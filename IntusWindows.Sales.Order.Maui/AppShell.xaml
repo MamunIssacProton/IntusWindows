@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="IntusWindows.Sales.Order.Maui.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:IntusWindows.Sales.Order.Maui"
+    xmlns:views="clr-namespace:IntusWindows.Sales.Order.Maui.Views"
+    Shell.FlyoutBehavior="Disabled">
+
+        <TabBar>
+            <Tab Title="Orders">
+                
+              <ShellContent ContentTemplate="{DataTemplate views:OrderView}"></ShellContent>
+            </Tab>
+            <Tab Title="Elements">
+               <ShellContent ContentTemplate="{DataTemplate views:ElementView}"></ShellContent>
+
+            </Tab>
+            <Tab Title="Windows">
+              <ShellContent ContentTemplate="{DataTemplate views:WindowView}"></ShellContent>
+            </Tab>
+            <Tab Title="Dimensions">
+                <ShellContent ContentTemplate="{DataTemplate views:DimensionView}"></ShellContent>
+
+            </Tab>
+            <Tab Title="States">
+                <ShellContent ContentTemplate="{DataTemplate views:StateView}"></ShellContent>
+
+            </Tab>
+        </TabBar>
+
+
+
+</Shell>
+
